@@ -22,14 +22,14 @@ public class ToolSigner {
 
     private static final Map<Class<?>, String> collectionTypes = Map.of(
             List.class, "List",
-            ArrayList.class, "ArrayList",
-            LinkedList.class, "LinkedList",
+            ArrayList.class, "List",
+            LinkedList.class, "List",
             Map.Entry.class, "MapEntry",
             Map.class, "Map",
-            HashMap.class, "HashMap",
-            LinkedHashMap.class, "LinkedHashMap",
-            TreeMap.class, "TreeMap",
-            ConcurrentHashMap.class, "ConcurrentHashMap",
+            HashMap.class, "Map",
+            LinkedHashMap.class, "Map",
+            TreeMap.class, "Map",
+            ConcurrentHashMap.class, "Map",
             Set.class, "Set"
     );
 
