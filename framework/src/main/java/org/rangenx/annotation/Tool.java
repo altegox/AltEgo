@@ -12,6 +12,8 @@ public @interface Tool {
 
     String[] defaultParams() default {};
 
-    boolean remoteFunction = false;
+    String description() default "";
+
+    boolean remoteTool = false;
 
 }

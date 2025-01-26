@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ToolCache {
 
+    int expireTime() default -1;
+
 }

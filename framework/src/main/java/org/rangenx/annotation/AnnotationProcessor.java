@@ -2,8 +2,6 @@ package org.rangenx.annotation;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -14,15 +12,9 @@ import java.util.function.Predicate;
 
 public class AnnotationProcessor {
 
-    private static final Logger log = LogManager.getLogger();
-
     private final Class<? extends Annotation> annotation;
 
-    private String[] packageName;
-
-//    public AnnotationProcessor(Class<? extends Annotation> annotation) {
-//        this.annotation = annotation;
-//    }
+    private final String[] packageName;
 
     public AnnotationProcessor(Class<? extends Annotation> annotation, String... packageName) {
         this.annotation = annotation;
@@ -30,23 +22,15 @@ public class AnnotationProcessor {
     }
 
     public List<Method> getAnnotatedMethods() {
-        if (packageName == null) {
-            throw new IllegalArgumentException("Package name cannot be null");
-        }
-        return getAnnotatedMethods(null, packageName);
-    }
-
-    public List<Method> getAnnotatedMethods(String... packageName) {
-        return getAnnotatedMethods(null, packageName);
+        return getAnnotatedMethods(null);
     }
 
     /**
      * 获取指定包中使用指定注解的所有方法
      *
-     * @param packageName package name
      * @return list of methods
      */
-    public List<Method> getAnnotatedMethods(Predicate<Method> filter, String... packageName) {
+    public List<Method> getAnnotatedMethods(Predicate<Method> filter) {
         List<Method> methods = new ArrayList<>();
 
         try (ScanResult scanResult = new ClassGraph()
@@ -85,10 +69,7 @@ public class AnnotationProcessor {
     private boolean isExcludedAnnotation(Method method) {
         Exclude exclude = method.getAnnotation(Exclude.class);
 
-        /*
-         * 若没有 @Exclude 注解，则不排除
-         * 若存在注解但无参数，则排除所有注解
-         */
+        /* 若存在注解但无参数，则排除所有注解 */
         if (exclude == null || exclude.annotation().length == 0) {
             return exclude != null;
         }
@@ -96,10 +77,6 @@ public class AnnotationProcessor {
         /* 若存在参数，则判断是否包含指定注解 */
         return Arrays.stream(exclude.annotation())
                 .anyMatch(aClass -> aClass == annotation);
-    }
-
-    public void setPackageName(String... packageName) {
-        this.packageName = packageName;
     }
 
 }

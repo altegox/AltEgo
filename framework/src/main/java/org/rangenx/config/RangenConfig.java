@@ -1,26 +1,23 @@
-package org.rangenx.toolcall;
+package org.rangenx.config;
 
-public class ToolConfig {
+public class RangenConfig {
 
     /**
      * 是否启用 ToolCache, 默认不启用
      */
     private static boolean enableCallCache = false;
 
+
     public static void enableToolCache() {
-        ToolConfig.enableCallCache = true;
+        enableCallCache = true;
     }
 
     public static void disableToolCache() {
-        ToolConfig.enableCallCache = false;
+        enableCallCache = false;
     }
 
-    // region Getter and Setter
-
-    public static boolean isEnableToolCache() {
+    public static boolean isEnableCallCache() {
         return enableCallCache;
     }
-
-    // endregion
 
 }
