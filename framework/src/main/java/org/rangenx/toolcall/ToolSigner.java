@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import java.lang.reflect.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ToolSigner {
 
@@ -21,9 +22,15 @@ public class ToolSigner {
 
     private static final Map<Class<?>, String> collectionTypes = Map.of(
             List.class, "List",
+            ArrayList.class, "ArrayList",
+            LinkedList.class, "LinkedList",
+            Map.Entry.class, "MapEntry",
             Map.class, "Map",
-            Set.class, "Set",
-            Collection.class, "Collection"
+            HashMap.class, "HashMap",
+            LinkedHashMap.class, "LinkedHashMap",
+            TreeMap.class, "TreeMap",
+            ConcurrentHashMap.class, "ConcurrentHashMap",
+            Set.class, "Set"
     );
 
     private static String toWrapper(Class<?> paramType) {

@@ -13,9 +13,9 @@ public class Tools {
         return System.getProperty("os.name");
     }
 
-//    public int add(int a, int b) {
-//        return a + b;
-//    }
+    public int add(int a, int b) {
+        return a + b;
+    }
 
     public int add(List<Integer> numbers) {
         return numbers.stream().mapToInt(Integer::intValue).sum();

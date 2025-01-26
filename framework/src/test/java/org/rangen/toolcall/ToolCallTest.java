@@ -22,19 +22,11 @@ public class ToolCallTest {
         RangenFramework.init();
     }
 
-//    @Test
-//    void testToolCaller() {
-//        System.out.println("-------------- ToolCaller --------------");
-//        Caller<Integer> caller = new ToolCaller<>();
-//        Integer result = caller.call("add", 1, 2);
-//        assertEquals(3, result, "1 + 2 should equal 3");
-//    }
-
     @Test
     void testToolCaller() {
-        System.out.println("-------------- ToolCaller List--------------");
+        System.out.println("-------------- ToolCaller --------------");
         Caller<Integer> caller = new ToolCaller<>();
-        Integer result = caller.call("add", List.of(1, 2));
+        Integer result = caller.call("add", 1, 2);
         assertEquals(3, result, "1 + 2 should equal 3");
     }
 
@@ -44,7 +36,6 @@ public class ToolCallTest {
         String osName = caller.call("getOSName");
         assertNotNull(osName, "OS name should not be null");
         Log.info("OS Name: " + osName);
-        System.out.println("OS Name: " + osName);
     }
 
     @Test
