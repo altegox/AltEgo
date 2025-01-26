@@ -4,9 +4,7 @@ import org.rangenx.MetaData;
 import org.rangenx.annotation.AnnotationProcessor;
 import org.rangenx.annotation.ToolCache;
 
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ToolCacheManager {
 
