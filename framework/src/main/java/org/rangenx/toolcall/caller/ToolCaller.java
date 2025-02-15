@@ -9,7 +9,7 @@ import org.rangenx.toolcall.ToolCacheManager;
 import org.rangenx.toolcall.ToolManager;
 import org.rangenx.toolcall.TypeReference;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -33,73 +33,148 @@ public class ToolCaller<T> implements Caller<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T call(String toolName, Object... args) {
-        ToolEntity toolEntity = toolManager.getTool(toolName, args);
-        if (toolEntity == null) {
+        ToolEntity tool = toolManager.getTool(toolName, args);
+        if (tool == null) {
             throw new ToolNotFindException("Tool not found: " + toolName + ", args: " + Arrays.toString(args));
         }
 
-        boolean isCacheMethod = toolCacheManager.isCachedMethod(toolEntity.signature());
-        if (RangenConfig.isEnableCallCache() && isCacheMethod) {
-            Object cacheValue = toolCacheManager.getCachedTool(getCacheKey(toolEntity, args));
-            if (cacheValue != null) {
-                /*
-                 * 用于区分 '未缓存' 与 '缓存值为 null' 两种情况
-                 * - 如果是 CacheEnum.NULL，则说明已命中缓存，但缓存值为 null
-                 * - 如果是 null，则说明未命中缓存，直接返回 null
-                 */
-                if (cacheValue == CacheEnum.NULL) return null;
-                return (T) cacheValue;
-            }
-        }
+        Object cacheValue = getFromCache(tool, args);
+        if (cacheValue != null) return (T) cacheValue;
 
         try {
-            // 根据参数动态解析重载方法
-            Class<?> declaringClass = toolEntity.method().getDeclaringClass();
-            Class<?>[] argTypes = Arrays.stream(args)
-                    .map(arg -> {
-                        if (arg == null) return Object.class;
-                        Class<?> clazz = arg.getClass();
-                        if (List.class.isAssignableFrom(clazz)) return List.class;
-                        if (Map.class.isAssignableFrom(clazz)) return Map.class;
-                        if (Set.class.isAssignableFrom(clazz)) return Set.class;
-                        if (Collection.class.isAssignableFrom(clazz)) return Collection.class;
-                        if (clazz == Integer.class) return int.class;
-                        if (clazz == Double.class) return double.class;
-                        if (clazz == Long.class) return long.class;
-                        if (clazz == Boolean.class) return boolean.class;
-                        if (clazz == Float.class) return float.class;
-                        if (clazz == Character.class) return char.class;
-                        if (clazz == Byte.class) return byte.class;
-                        if (clazz == Short.class) return short.class;
-                        if (clazz == String.class) return String.class;
-                        if (clazz.isArray()) return clazz.getComponentType();
-                        if (clazz.isEnum()) return Enum.class;
-                        return clazz;
-                    }).toArray(Class<?>[]::new);
+            Method resolvedMethod = resolveMethod(tool, args);
 
-            Method resolvedMethod = declaringClass.getDeclaredMethod(toolEntity.method().getName(), argTypes);
-            resolvedMethod.setAccessible(true);
-
-            Object instance = declaringClass.getDeclaredConstructor().newInstance();
+            Object instance = createInstance(resolvedMethod.getDeclaringClass());
             Object result = resolvedMethod.invoke(instance, args);
 
-            if (RangenConfig.isEnableCallCache() && isCacheMethod) {
-                toolCacheManager.addCacheTool(getCacheKey(ToolEntity.of(resolvedMethod, null, null), args),
-                        Objects.requireNonNullElse(result, CacheEnum.NULL));
-            }
+            cacheResult(result, tool, args, resolvedMethod);
 
-            // 返回类型检查
-            if (result != null && returnType != null && !((Class<?>) returnType).isInstance(result)) {
-                throw new ClassCastException("Return type mismatch, expected: " + returnType + ", but got: " + result.getClass());
-            }
+            return validateReturnType(result);
+        } catch (Exception e) {
+            handleInvocationException(e, tool);
+        }
+        return null;
+    }
 
-            return (T) result;
+    // 缓存获取
+    private Object getFromCache(ToolEntity tool, Object... args) {
+        if (RangenConfig.isEnableCallCache() && toolCacheManager.isCachedMethod(tool.signature())) {
+            Object cacheValue = toolCacheManager.getCachedTool(getCacheKey(tool, args));
+            if (cacheValue == CacheEnum.NULL) return null;
+            return cacheValue;
+        }
+        return null;
+    }
+
+    private Method resolveMethod(ToolEntity tool, Object... args) throws NoSuchMethodException {
+        Class<?> declaringClass = tool.method().getDeclaringClass();
+        Method[] methods = declaringClass.getMethods();
+
+        for (Method method : methods) {
+            if (!method.getName().equals(tool.method().getName())) continue;
+            Class<?>[] paramTypes = method.getParameterTypes();
+            if (paramTypes.length != args.length) continue;
+            boolean matched = true;
+            for (int i = 0; i < paramTypes.length; i++) {
+                if (!isAssignable(args[i], paramTypes[i])) {
+                    matched = false;
+                    break;
+                }
+            }
+            if (matched) {
+                return method;
+            }
+        }
+        throw new NoSuchMethodException("No matching method found: " + tool.method().getName() + " in class " + declaringClass.getName());
+    }
+
+    private Object createInstance(Class<?> declaringClass) {
+        try {
+            // 优先尝试无参构造函数
+            Constructor<?> constructor = declaringClass.getDeclaredConstructor();
+            return constructor.newInstance();
         } catch (NoSuchMethodException e) {
+            // 如果没有无参构造函数，尝试使用其他构造函数
+            Constructor<?>[] constructors = declaringClass.getConstructors();
+            for (Constructor<?> cons : constructors) {
+                Class<?>[] paramTypes = cons.getParameterTypes();
+                Object[] initArgs = new Object[paramTypes.length];
+                for (int i = 0; i < paramTypes.length; i++) {
+                    initArgs[i] = getDefaultValue(paramTypes[i]);
+                }
+                try {
+                    return cons.newInstance(initArgs);
+                } catch (Exception ex) {
+                    continue;
+                }
+            }
+            throw new RuntimeException("No suitable constructor found for class: " + declaringClass.getName());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create instance of class: " + declaringClass.getName(), e);
+        }
+    }
+
+    private Object getDefaultValue(Class<?> type) {
+        if (type.isPrimitive()) {
+            if (type == boolean.class) return false;
+            if (type == char.class) return '\u0000';
+            if (type == byte.class) return (byte) 0;
+            if (type == short.class) return (short) 0;
+            if (type == int.class) return 0;
+            if (type == long.class) return 0L;
+            if (type == float.class) return 0.0f;
+            if (type == double.class) return 0.0d;
+        }
+        return null;
+    }
+
+    // 检查参数类型是否匹配
+    private boolean isAssignable(Object arg, Class<?> paramType) {
+        if (arg == null) {
+            return !paramType.isPrimitive();
+        }
+        Class<?> argClass = arg.getClass();
+        if (paramType.isPrimitive()) {
+            return getWrapperClass(paramType).isAssignableFrom(argClass);
+        } else {
+            return paramType.isAssignableFrom(argClass);
+        }
+    }
+
+    // 获取基本类型的包装类
+    private Class<?> getWrapperClass(Class<?> primitiveType) {
+        if (primitiveType == boolean.class) return Boolean.class;
+        if (primitiveType == byte.class) return Byte.class;
+        if (primitiveType == char.class) return Character.class;
+        if (primitiveType == short.class) return Short.class;
+        if (primitiveType == int.class) return Integer.class;
+        if (primitiveType == long.class) return Long.class;
+        if (primitiveType == float.class) return Float.class;
+        if (primitiveType == double.class) return Double.class;
+        return primitiveType;
+    }
+
+    private void cacheResult(Object result, ToolEntity toolEntity, Object[] args, Method resolvedMethod) {
+        if (RangenConfig.isEnableCallCache() && toolCacheManager.isCachedMethod(toolEntity.signature())) {
+            toolCacheManager.addCacheTool(getCacheKey(ToolEntity.of(resolvedMethod, null, null), args),
+                    Objects.requireNonNullElse(result, CacheEnum.NULL));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private T validateReturnType(Object result) {
+        if (result != null && returnType != null && !((Class<?>) returnType).isInstance(result)) {
+            throw new ClassCastException("Return type mismatch, expected: " + returnType + ", but got: " + result.getClass());
+        }
+        return (T) result;
+    }
+
+    private void handleInvocationException(Exception e, ToolEntity toolEntity) {
+        if (e instanceof NoSuchMethodException) {
             throw new RangenException("No matching method found: " + toolEntity.signature(), e);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new RangenException("Error invoking tool: " + toolName, e);
+        } else {
+            throw new RangenException("Error invoking tool: " + toolEntity.toolName(), e);
         }
     }
 
 }
-
