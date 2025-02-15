@@ -1,20 +1,20 @@
-package org.rangenx.toolcall.caller;
+package org.rangenx.framework.toolcall.caller;
 
 import org.rangenx.common.enums.CacheEnum;
 import org.rangenx.common.exception.RangenException;
 import org.rangenx.common.exception.ToolNotFindException;
-import org.rangenx.config.RangenConfig;
-import org.rangenx.toolcall.ToolEntity;
-import org.rangenx.toolcall.ToolCacheManager;
-import org.rangenx.toolcall.ToolManager;
-import org.rangenx.toolcall.TypeReference;
+import org.rangenx.framework.config.RangenConfig;
+import org.rangenx.framework.toolcall.ToolEntity;
+import org.rangenx.framework.toolcall.ToolCacheManager;
+import org.rangenx.framework.toolcall.ToolManager;
+import org.rangenx.framework.toolcall.TypeReference;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static org.rangenx.toolcall.ToolCacheManager.getCacheKey;
+import static org.rangenx.framework.toolcall.ToolCacheManager.getCacheKey;
 
 public class ToolCaller<T> implements Caller<T> {
 
@@ -85,7 +85,8 @@ public class ToolCaller<T> implements Caller<T> {
                 return method;
             }
         }
-        throw new NoSuchMethodException("No matching method found: " + tool.method().getName() + " in class " + declaringClass.getName());
+        throw new NoSuchMethodException("No matching method found: " + tool.method().getName()
+                + " in class " + declaringClass.getName());
     }
 
     private Object createInstance(Class<?> declaringClass) {
@@ -93,7 +94,7 @@ public class ToolCaller<T> implements Caller<T> {
             // 优先尝试无参构造函数
             Constructor<?> constructor = declaringClass.getDeclaredConstructor();
             return constructor.newInstance();
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignore0) {
             // 如果没有无参构造函数，尝试使用其他构造函数
             Constructor<?>[] constructors = declaringClass.getConstructors();
             for (Constructor<?> cons : constructors) {
@@ -104,9 +105,7 @@ public class ToolCaller<T> implements Caller<T> {
                 }
                 try {
                     return cons.newInstance(initArgs);
-                } catch (Exception ex) {
-                    continue;
-                }
+                } catch (Exception ignore1) {}
             }
             throw new RuntimeException("No suitable constructor found for class: " + declaringClass.getName());
         } catch (Exception e) {
@@ -156,15 +155,18 @@ public class ToolCaller<T> implements Caller<T> {
 
     private void cacheResult(Object result, ToolEntity toolEntity, Object[] args, Method resolvedMethod) {
         if (RangenConfig.isEnableCallCache() && toolCacheManager.isCachedMethod(toolEntity.signature())) {
-            toolCacheManager.addCacheTool(getCacheKey(ToolEntity.of(resolvedMethod, null, null), args),
-                    Objects.requireNonNullElse(result, CacheEnum.NULL));
+            toolCacheManager.addCacheTool(
+                    getCacheKey(
+                            ToolEntity.of(resolvedMethod, null, null), args
+                    ), Objects.requireNonNullElse(result, CacheEnum.NULL));
         }
     }
 
     @SuppressWarnings("unchecked")
     private T validateReturnType(Object result) {
         if (result != null && returnType != null && !((Class<?>) returnType).isInstance(result)) {
-            throw new ClassCastException("Return type mismatch, expected: " + returnType + ", but got: " + result.getClass());
+            throw new ClassCastException("Return type mismatch, expected: " + returnType + ", but got: "
+                    + result.getClass());
         }
         return (T) result;
     }

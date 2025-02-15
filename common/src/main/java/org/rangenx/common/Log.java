@@ -1,10 +1,11 @@
 package org.rangenx.common;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Log {
 
-    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger("rangen-framework");
+    private static final Logger logger = LogManager.getLogger("rangen-framework");
 
     public static void debug(String message) {
         logger.debug(message);

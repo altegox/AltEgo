@@ -1,4 +1,4 @@
-package org.rangenx.toolcall;
+package org.rangenx.framework.toolcall;
 
 import java.lang.reflect.Method;
 

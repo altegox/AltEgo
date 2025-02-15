@@ -1,4 +1,4 @@
-package org.rangenx;
+package org.rangenx.framework;
 
 public class MetaData {
 

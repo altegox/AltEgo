@@ -1,8 +1,8 @@
-package org.rangenx.toolcall;
+package org.rangenx.framework.toolcall;
 
-import org.rangenx.MetaData;
-import org.rangenx.annotation.AnnotationProcessor;
-import org.rangenx.annotation.ToolCache;
+import org.rangenx.framework.MetaData;
+import org.rangenx.framework.annotation.AnnotationProcessor;
+import org.rangenx.framework.annotation.ToolCache;
 
 import java.util.*;
 

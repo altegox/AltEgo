@@ -1,4 +1,4 @@
-package org.rangenx.annotation;
+package org.rangenx.framework.annotation;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;

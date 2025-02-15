@@ -1,11 +1,11 @@
-package org.rangenx;
+package org.rangenx.framework;
 
-import org.rangenx.annotation.AnnotationProcessor;
-import org.rangenx.annotation.Tool;
-import org.rangenx.config.RangenConfig;
-import org.rangenx.toolcall.ToolCacheManager;
-import org.rangenx.toolcall.ToolManager;
-import org.rangenx.toolcall.ToolEntity;
+import org.rangenx.framework.annotation.AnnotationProcessor;
+import org.rangenx.framework.annotation.Tool;
+import org.rangenx.framework.config.RangenConfig;
+import org.rangenx.framework.toolcall.ToolCacheManager;
+import org.rangenx.framework.toolcall.ToolManager;
+import org.rangenx.framework.toolcall.ToolEntity;
 
 public class RangenFramework {
 

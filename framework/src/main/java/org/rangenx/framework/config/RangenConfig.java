@@ -1,4 +1,4 @@
-package org.rangenx.config;
+package org.rangenx.framework.config;
 
 public class RangenConfig {
 

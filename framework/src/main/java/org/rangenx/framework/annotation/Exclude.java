@@ -1,4 +1,4 @@
-package org.rangenx.annotation;
+package org.rangenx.framework.annotation;
 
 
 import java.lang.annotation.*;
