@@ -1,6 +1,7 @@
 package org.rangenx.framework.annotation;
 
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 
 import java.lang.annotation.Annotation;
@@ -19,6 +20,27 @@ public class AnnotationProcessor {
     public AnnotationProcessor(Class<? extends Annotation> annotation, String... packageName) {
         this.annotation = annotation;
         this.packageName = packageName;
+    }
+
+    public List<Class<?>> getAnnotatedClasses() {
+        List<Class<?>> classes = new ArrayList<>();
+
+        try (ScanResult scanResult = new ClassGraph()
+                .enableAllInfo()
+                .acceptPackages(packageName)
+                .scan()) {
+
+            scanResult.getAllClasses().forEach(classInfo -> {
+                Class<?> clazz = classInfo.loadClass();
+                if (clazz.isAnnotationPresent(annotation)) {
+                    classes.add(clazz);
+                }
+            });
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return classes;
     }
 
     public List<Method> getAnnotatedMethods() {
