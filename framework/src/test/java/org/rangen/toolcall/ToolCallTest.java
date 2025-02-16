@@ -2,12 +2,12 @@ package org.rangen.toolcall;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.rangenx.RangenFramework;
+import org.rangenx.framework.RangenFramework;
 import org.rangenx.common.Log;
 import org.rangenx.common.exception.ToolNotFindException;
-import org.rangenx.config.RangenConfig;
-import org.rangenx.toolcall.caller.Caller;
-import org.rangenx.toolcall.caller.ToolCaller;
+import org.rangenx.framework.config.RangenConfig;
+import org.rangenx.framework.toolcall.caller.Caller;
+import org.rangenx.framework.toolcall.caller.ToolCaller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +27,7 @@ public class ToolCallTest {
         System.out.println("-------------- ToolCaller --------------");
         Caller<Integer> caller = new ToolCaller<>();
         Integer result = caller.call("add", 1, 2);
+        Integer result2 = caller.call("add", 1, 2);
         assertEquals(3, result, "1 + 2 should equal 3");
     }
 

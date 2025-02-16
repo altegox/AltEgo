@@ -4,12 +4,12 @@ import org.rangenx.common.enums.CacheEnum;
 import org.rangenx.common.exception.RangenException;
 import org.rangenx.common.exception.ToolNotFindException;
 import org.rangenx.framework.config.RangenConfig;
+import org.rangenx.framework.ioc.InstanceUtils;
 import org.rangenx.framework.toolcall.ToolEntity;
 import org.rangenx.framework.toolcall.ToolCacheManager;
 import org.rangenx.framework.toolcall.ToolManager;
 import org.rangenx.framework.toolcall.TypeReference;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -44,7 +44,7 @@ public class ToolCaller<T> implements Caller<T> {
         try {
             Method resolvedMethod = resolveMethod(tool, args);
 
-            Object instance = createInstance(resolvedMethod.getDeclaringClass());
+            Object instance = InstanceUtils.createInstance(resolvedMethod.getDeclaringClass());
             Object result = resolvedMethod.invoke(instance, args);
 
             cacheResult(result, tool, args, resolvedMethod);
@@ -56,7 +56,6 @@ public class ToolCaller<T> implements Caller<T> {
         return null;
     }
 
-    // 缓存获取
     private Object getFromCache(ToolEntity tool, Object... args) {
         if (RangenConfig.isEnableCallCache() && toolCacheManager.isCachedMethod(tool.signature())) {
             Object cacheValue = toolCacheManager.getCachedTool(getCacheKey(tool, args));
@@ -89,44 +88,6 @@ public class ToolCaller<T> implements Caller<T> {
                 + " in class " + declaringClass.getName());
     }
 
-    private Object createInstance(Class<?> declaringClass) {
-        try {
-            // 优先尝试无参构造函数
-            Constructor<?> constructor = declaringClass.getDeclaredConstructor();
-            return constructor.newInstance();
-        } catch (NoSuchMethodException ignore0) {
-            // 如果没有无参构造函数，尝试使用其他构造函数
-            Constructor<?>[] constructors = declaringClass.getConstructors();
-            for (Constructor<?> cons : constructors) {
-                Class<?>[] paramTypes = cons.getParameterTypes();
-                Object[] initArgs = new Object[paramTypes.length];
-                for (int i = 0; i < paramTypes.length; i++) {
-                    initArgs[i] = getDefaultValue(paramTypes[i]);
-                }
-                try {
-                    return cons.newInstance(initArgs);
-                } catch (Exception ignore1) {}
-            }
-            throw new RuntimeException("No suitable constructor found for class: " + declaringClass.getName());
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create instance of class: " + declaringClass.getName(), e);
-        }
-    }
-
-    private Object getDefaultValue(Class<?> type) {
-        if (type.isPrimitive()) {
-            if (type == boolean.class) return false;
-            if (type == char.class) return '\u0000';
-            if (type == byte.class) return (byte) 0;
-            if (type == short.class) return (short) 0;
-            if (type == int.class) return 0;
-            if (type == long.class) return 0L;
-            if (type == float.class) return 0.0f;
-            if (type == double.class) return 0.0d;
-        }
-        return null;
-    }
-
     // 检查参数类型是否匹配
     private boolean isAssignable(Object arg, Class<?> paramType) {
         if (arg == null) {
@@ -140,7 +101,6 @@ public class ToolCaller<T> implements Caller<T> {
         }
     }
 
-    // 获取基本类型的包装类
     private Class<?> getWrapperClass(Class<?> primitiveType) {
         if (primitiveType == boolean.class) return Boolean.class;
         if (primitiveType == byte.class) return Byte.class;
@@ -150,6 +110,7 @@ public class ToolCaller<T> implements Caller<T> {
         if (primitiveType == long.class) return Long.class;
         if (primitiveType == float.class) return Float.class;
         if (primitiveType == double.class) return Double.class;
+
         return primitiveType;
     }
 

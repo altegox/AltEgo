@@ -2,12 +2,12 @@ package org.rangen.annotation;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.rangenx.RangenFramework;
+import org.rangenx.framework.RangenFramework;
 import org.rangenx.common.Log;
-import org.rangenx.config.RangenConfig;
-import org.rangenx.toolcall.ToolCacheManager;
-import org.rangenx.toolcall.ToolEntity;
-import org.rangenx.toolcall.ToolManager;
+import org.rangenx.framework.config.RangenConfig;
+import org.rangenx.framework.toolcall.ToolCacheManager;
+import org.rangenx.framework.toolcall.ToolEntity;
+import org.rangenx.framework.toolcall.ToolManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,6 +26,7 @@ public class AnnotationTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testToolContainer() throws IllegalAccessException {
         System.out.println("-------------- ToolManager --------------");
         ToolManager instance = ToolManager.getInstance();
@@ -40,12 +41,12 @@ public class AnnotationTest {
                     Method method = tool.method();
                     Log.info("toolname: {}, tool: {}", key, method.toGenericString());
                 });
-
             }
         }
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testCacheContainer() throws IllegalAccessException {
         System.out.println("-------------- ToolCacheManager --------------");
         ToolCacheManager instance = ToolCacheManager.getInstance();

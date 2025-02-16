@@ -1,19 +1,27 @@
 package org.rangen.toolcall;
 
-import org.rangenx.annotation.Exclude;
-import org.rangenx.annotation.Tool;
-import org.rangenx.annotation.ToolCache;
+import org.rangen.annotation.AnnotationTest;
+import org.rangenx.framework.annotation.Exclude;
+import org.rangenx.framework.annotation.Tool;
+import org.rangenx.framework.annotation.ToolCache;
 
 import java.util.List;
 
 @Tool
 public class Tools {
+//
+//    TestConstruct testConstruct;
+//
+//    public Tools(TestConstruct testConstruct) {
+//        this.testConstruct = testConstruct;
+//    }
 
     public static String getOSName() {
         return System.getProperty("os.name");
     }
 
     public int add(int a, int b) {
+//        System.out.println(testConstruct.toString());
         return a + b;
     }
 
