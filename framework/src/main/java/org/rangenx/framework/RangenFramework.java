@@ -14,36 +14,48 @@ import java.util.List;
 
 public class RangenFramework {
 
-    public static void init(String... packageName) {
-        // 如果为null，则使用调用这个函数的类所在的包的包名
+    public synchronized static void init(String... packageName) {
         if (packageName == null || packageName.length == 0) {
             String callerClassName = Thread.currentThread().getStackTrace()[2].getClassName();
-            String callerPackageName = callerClassName.substring(0, callerClassName.lastIndexOf('.'));
+            int lastDot = callerClassName.lastIndexOf('.');
+            String callerPackageName = (lastDot == -1) ? "" : callerClassName.substring(0, lastDot);
             packageName = new String[]{callerPackageName};
         }
         MetaData.basePackage = packageName;
+
+        initCache(packageName);
+        registerTools(packageName);
+        registerComponents(packageName);
+    }
+
+    private static void initCache(String... packageName) {
         if (RangenConfig.isEnableCallCache()) {
             ToolCacheManager.init(packageName);
         }
+    }
 
-        AnnotationProcessor processor = new AnnotationProcessor(Tool.class, packageName);
-        processor.getAnnotatedMethods().forEach(method -> {
+    /**
+     * 扫描 @Tool 注解并注册工具方法
+     */
+    private static void registerTools(String... packageName) {
+        AnnotationProcessor toolProcessor = new AnnotationProcessor(Tool.class, packageName);
+        toolProcessor.getAnnotatedMethods().forEach(method -> {
             ToolEntity tool = ToolEntity.of(method, method.getName(), null);
             ToolManager.getInstance().registerTool(tool);
         });
-
-        AnnotationProcessor iocProcessor = new AnnotationProcessor(Component.class, packageName);
-        List<Class<?>> annotatedClasses = iocProcessor.getAnnotatedClasses();
-
-        ComponentContainer container = ComponentContainer.getInstance();
-
-        for (Class<?> clazz : annotatedClasses) {
-            if (!ComponentContainer.getInstance().contains(clazz)) {
-                Object instance = InstanceUtils.createInstance(clazz);
-                container.register(clazz, instance);
-            }
-        }
-
     }
+
+    /**
+     * 扫描 @Component 注解并实例化
+     */
+    private static void registerComponents(String... packageName) {
+        AnnotationProcessor componentProcessor = new AnnotationProcessor(Component.class, packageName);
+        List<Class<?>> annotatedClasses = componentProcessor.getAnnotatedClasses();
+        ComponentContainer container = ComponentContainer.getInstance();
+        annotatedClasses.stream()
+                .filter(clazz -> !container.contains(clazz))
+                .forEach(clazz -> container.register(clazz, InstanceUtils.createInstance(clazz)));
+    }
+
 
 }
