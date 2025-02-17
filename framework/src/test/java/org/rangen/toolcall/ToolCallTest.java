@@ -27,7 +27,6 @@ public class ToolCallTest {
         System.out.println("-------------- ToolCaller --------------");
         Caller<Integer> caller = new ToolCaller<>();
         Integer result = caller.call("add", 1, 2);
-        Integer result2 = caller.call("add", 1, 2);
         assertEquals(3, result, "1 + 2 should equal 3");
     }
 

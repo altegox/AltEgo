@@ -11,6 +11,10 @@ public class Log {
         logger.debug(message);
     }
 
+    public static void debug(String message, Object... args) {
+        logger.debug(message, args);
+    }
+
     public static void info(String message) {
         logger.info(message);
     }

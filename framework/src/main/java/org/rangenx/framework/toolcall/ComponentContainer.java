@@ -1,4 +1,4 @@
-package org.rangenx.framework.ioc;
+package org.rangenx.framework.toolcall;
 
 import java.util.HashMap;
 import java.util.Map;

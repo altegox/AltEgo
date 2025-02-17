@@ -9,19 +9,19 @@ import java.util.List;
 
 @Tool
 public class Tools {
-//
-//    TestConstruct testConstruct;
-//
-//    public Tools(TestConstruct testConstruct) {
-//        this.testConstruct = testConstruct;
-//    }
+
+    TestConstruct testConstruct;
+
+    public Tools(TestConstruct testConstruct) {
+        this.testConstruct = testConstruct;
+    }
 
     public static String getOSName() {
         return System.getProperty("os.name");
     }
 
     public int add(int a, int b) {
-//        System.out.println(testConstruct.toString());
+        System.out.println(testConstruct.toString());
         return a + b;
     }
 

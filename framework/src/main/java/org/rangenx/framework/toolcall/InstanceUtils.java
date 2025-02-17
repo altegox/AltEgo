@@ -1,17 +1,27 @@
-package org.rangenx.framework.ioc;
+package org.rangenx.framework.toolcall;
 
 import org.rangenx.common.Log;
+import org.rangenx.framework.annotation.Component;
 
 import java.lang.reflect.Constructor;
+import java.util.HashSet;
+import java.util.Set;
 
 public class InstanceUtils {
 
     private static final ComponentContainer container = ComponentContainer.getInstance();
+    // 用于检测循环依赖：保存当前正在构造的类集合
+    private static final ThreadLocal<Set<Class<?>>> constructing = ThreadLocal.withInitial(HashSet::new);
 
     public static Object createInstance(Class<?> declaringClass) {
         if (container.contains(declaringClass)) {
             return container.get(declaringClass);
         }
+        // 检查是否存在循环依赖
+        if (constructing.get().contains(declaringClass)) {
+            throw new RuntimeException("Circular dependency detected for class: " + declaringClass.getName());
+        }
+        constructing.get().add(declaringClass);
         try {
             Constructor<?>[] constructors = declaringClass.getConstructors();
 
@@ -21,17 +31,19 @@ public class InstanceUtils {
 
                 boolean canInstantiate = true;
                 for (int i = 0; i < parameterTypes.length; i++) {
-                    initArgs[i] = getConstructParams(parameterTypes[i]);
-                    if (initArgs[i] == null && !parameterTypes[i].isPrimitive()) {
+                    Object paramInstance = getConstructParams(parameterTypes[i]);
+                    // 如果参数不是原始类型且无法解析依赖，则此构造方法不可用
+                    if (paramInstance == null && !parameterTypes[i].isPrimitive()) {
                         canInstantiate = false;
                         break;
                     }
+                    initArgs[i] = paramInstance;
                 }
 
                 if (canInstantiate) {
                     Object instance = constructor.newInstance(initArgs);
                     container.register(declaringClass, instance);
-                    Log.info("Create instance of class: {}", declaringClass.getName());
+                    Log.debug("Create instance of class: {}", declaringClass.getName());
                     return instance;
                 }
             }
@@ -39,6 +51,8 @@ public class InstanceUtils {
             throw new RuntimeException("No suitable constructor found for class: " + declaringClass.getName());
         } catch (Exception e) {
             throw new RuntimeException("Failed to create instance of class: " + declaringClass.getName(), e);
+        } finally {
+            constructing.get().remove(declaringClass);
         }
     }
 
@@ -59,8 +73,12 @@ public class InstanceUtils {
             return container.get(type);
         }
 
+        // 如果该类型被@Component标记，则递归创建该依赖
+        if (type.isAnnotationPresent(Component.class)) {
+            return createInstance(type);
+        }
+
         return null;
     }
-
 
 }

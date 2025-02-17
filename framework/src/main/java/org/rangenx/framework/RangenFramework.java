@@ -4,8 +4,8 @@ import org.rangenx.framework.annotation.AnnotationProcessor;
 import org.rangenx.framework.annotation.Component;
 import org.rangenx.framework.annotation.Tool;
 import org.rangenx.framework.config.RangenConfig;
-import org.rangenx.framework.ioc.ComponentContainer;
-import org.rangenx.framework.ioc.InstanceUtils;
+import org.rangenx.framework.toolcall.ComponentContainer;
+import org.rangenx.framework.toolcall.InstanceUtils;
 import org.rangenx.framework.toolcall.ToolCacheManager;
 import org.rangenx.framework.toolcall.ToolManager;
 import org.rangenx.framework.toolcall.ToolEntity;
@@ -38,8 +38,10 @@ public class RangenFramework {
         ComponentContainer container = ComponentContainer.getInstance();
 
         for (Class<?> clazz : annotatedClasses) {
-            Object instance = InstanceUtils.createInstance(clazz);
-            container.register(clazz, instance);
+            if (!ComponentContainer.getInstance().contains(clazz)) {
+                Object instance = InstanceUtils.createInstance(clazz);
+                container.register(clazz, instance);
+            }
         }
 
     }

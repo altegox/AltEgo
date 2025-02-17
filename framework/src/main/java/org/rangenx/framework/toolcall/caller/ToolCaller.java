@@ -4,7 +4,7 @@ import org.rangenx.common.enums.CacheEnum;
 import org.rangenx.common.exception.RangenException;
 import org.rangenx.common.exception.ToolNotFindException;
 import org.rangenx.framework.config.RangenConfig;
-import org.rangenx.framework.ioc.InstanceUtils;
+import org.rangenx.framework.toolcall.InstanceUtils;
 import org.rangenx.framework.toolcall.ToolEntity;
 import org.rangenx.framework.toolcall.ToolCacheManager;
 import org.rangenx.framework.toolcall.ToolManager;
