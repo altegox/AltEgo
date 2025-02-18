@@ -4,14 +4,13 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$PROJECT_DIR$/../../../BuildTools/Gradle/gradle-8.9" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/framework" />
+            <option value="$PROJECT_DIR$/rangenx-common" />
+            <option value="$PROJECT_DIR$/rangenx-framework" />
           </set>
         </option>
       </GradleProjectSettings>
