@@ -78,8 +78,8 @@ public class TestHttpClient {
 
     @Test
     void testMonoPost() throws InterruptedException {
-        HttpClient client = new HttpClient("https://yunwu.ai/v1/chat/completions",
-                "sk-5bNTjF381k8EBbn1RBut8p42VW6MlZOOGr9oXiSOpx4jCc7Z");
+        HttpClient client = new HttpClient(System.getenv("OPEN_AI_URL"),
+                System.getenv("OPEN_AI_API_KEY"));
         DefaultRequest request = new DefaultRequest();
         request.setModel("gpt-4o-mini");
         request.setMessages(List.of(new Message("user", "你好")));
