@@ -33,8 +33,8 @@ public class TestHttpClient {
     void testFluxPost() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
 
-        HttpClient client = new HttpClient("https://yunwu.ai/v1/chat/completions",
-                "sk-5bNTjF381k8EBbn1RBut8p42VW6MlZOOGr9oXiSOpx4jCc7Z");
+        HttpClient client = new HttpClient(System.getenv("OPEN_AI_URL"),
+                System.getenv("OPEN_AI_API_KEY"));
         DefaultRequest request = new DefaultRequest();
         request.setModel("gpt-4o-mini");
         String content = """
