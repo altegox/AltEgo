@@ -1,3 +1,3 @@
-rootProject.name = "rangen"
-include("framework")
-include("common")
+rootProject.name = "rangenx"
+include("rangenx-framework")
+include("rangenx-common")
