@@ -20,6 +20,10 @@ public class Tools {
         return System.getProperty("os.name");
     }
 
+    public static String getTodayWeather(String city) {
+        return "多云";
+    }
+
     public int add(int a, int b) {
         System.out.println(testConstruct.toString());
         return a + b;
