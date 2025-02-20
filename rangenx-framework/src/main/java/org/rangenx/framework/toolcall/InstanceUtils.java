@@ -42,7 +42,6 @@ public class InstanceUtils {
 
                 if (canInstantiate) {
                     Object instance = constructor.newInstance(initArgs);
-                    container.register(declaringClass, instance);
                     Log.debug("Create instance of class: {}", declaringClass.getName());
                     return instance;
                 }
