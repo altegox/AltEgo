@@ -24,8 +24,11 @@ public class Tools {
         return "多云";
     }
 
-    public int add(int a, int b) {
+    public void printTestConstruct() {
         System.out.println(testConstruct.toString());
+    }
+
+    public int add(int a, int b) {
         return a + b;
     }
 

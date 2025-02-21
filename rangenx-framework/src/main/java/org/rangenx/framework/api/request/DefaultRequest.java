@@ -183,4 +183,89 @@ public class DefaultRequest {
                 '}';
     }
 
+    public static class Builder {
+        private String model;
+        private String user;
+        private List<Message> messages;
+        private Integer maxTokens;
+        private Double temperature;
+        private Double topP;
+        private Integer n;
+        private Boolean stream;
+        private String stop;
+        private Double presencePenalty;
+        private Double frequencyPenalty;
+        private String logitBias;
+
+        public Builder model(String model) {
+            this.model = model;
+            return this;
+        }
+
+        public Builder user(String user) {
+            this.user = user;
+            return this;
+        }
+
+        public Builder messages(List<Message> messages) {
+            this.messages = messages;
+            return this;
+        }
+
+        public Builder maxTokens(Integer maxTokens) {
+            this.maxTokens = maxTokens;
+            return this;
+        }
+
+        public Builder temperature(Double temperature) {
+            this.temperature = temperature;
+            return this;
+        }
+
+        public Builder topP(Double topP) {
+            this.topP = topP;
+            return this;
+        }
+
+        public Builder n(Integer n) {
+            this.n = n;
+            return this;
+        }
+
+        public Builder stream(Boolean stream) {
+            this.stream = stream;
+            return this;
+        }
+
+        public Builder stop(String stop) {
+            this.stop = stop;
+            return this;
+        }
+
+        public Builder presencePenalty(Double presencePenalty) {
+            this.presencePenalty = presencePenalty;
+            return this;
+        }
+
+        public Builder frequencyPenalty(Double frequencyPenalty) {
+            this.frequencyPenalty = frequencyPenalty;
+            return this;
+        }
+
+        public Builder logitBias(String logitBias) {
+            this.logitBias = logitBias;
+            return this;
+        }
+
+        public DefaultRequest build() {
+            return new DefaultRequest(model, user, messages, maxTokens, temperature, topP, n, stream, stop,
+                    presencePenalty, frequencyPenalty, logitBias);
+        }
+
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
 }

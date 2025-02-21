@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.rangenx.common.utils.Json;
 import org.rangenx.framework.RangenxFramework;
+import org.rangenx.framework.api.ChatListener;
 import org.rangenx.framework.api.HttpClient;
 import org.rangenx.framework.api.request.DefaultRequest;
 import org.rangenx.framework.api.request.Message;
@@ -78,8 +79,8 @@ public class TestHttpClient {
 
     @Test
     void testMonoPost() throws InterruptedException {
-        HttpClient client = new HttpClient(System.getenv("OPEN_AI_URL"),
-                System.getenv("OPEN_AI_API_KEY"));
+        HttpClient client = new HttpClient("https://yunwu.ai/v1/chat/completions",
+                "sk-nGixhq1saUIgfX7YskwusqFDNUbHqOOtWccHLaCm5MKpxK4u");
         DefaultRequest request = new DefaultRequest();
         request.setModel("gpt-4o-mini");
         request.setMessages(List.of(new Message("user", "你好")));
@@ -90,6 +91,5 @@ public class TestHttpClient {
         DefaultChatResponse chatResponse = Json.fromJson(jsonData, DefaultChatResponse.class);
         System.out.println(chatResponse.toString());
     }
-
 
 }

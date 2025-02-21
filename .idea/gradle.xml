@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/api-openai" />
             <option value="$PROJECT_DIR$/rangenx-common" />
             <option value="$PROJECT_DIR$/rangenx-framework" />
           </set>

@@ -31,6 +31,13 @@ public class ToolCallTest {
     }
 
     @Test
+    void testAdd() {
+        Caller<Integer> caller = new ToolCaller<>();
+        Integer result = caller.call("add", 1, 2);
+        assertEquals(3, result, "1 + 2 should equal 3");
+    }
+
+    @Test
     void testGetOSName() {
         Caller<String> caller = new ToolCaller<>();
         String osName = caller.call("getOSName");
@@ -76,6 +83,12 @@ public class ToolCallTest {
         caller.call("excludeCachePrint");
         long end = System.currentTimeMillis();
         assert (end - start) >= 500;
+    }
+
+    @Test
+    void testToolInstanceConstruct() {
+        Caller<Void> caller = new ToolCaller<>();
+        caller.call("printTestConstruct");
     }
 
 }
