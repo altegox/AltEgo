@@ -1,3 +1,3 @@
 ## Rangenx
 
-A Java RAG framework for LLMs.
+A Java agent framework for LLMs.
