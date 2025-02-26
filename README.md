@@ -70,7 +70,7 @@ public class TestChatService {
         System.out.println(response.response());
     }
 
-    /* 非流式调用 */
+    /* 流式调用 */
     @Test
     void streamChat() {
         OpenaiModel model = OpenaiModel.builder()
