@@ -1,13 +1,13 @@
 
-# Altego - A Java AI Agent Framework
+# AltEgo
 
-# ![Altego](img/altego-title.jpg)
+# ![AltEgo](img/altego-title.jpg)
 
 [![License](https://img.shields.io/github/license/altegox/altego)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/altegox/altego?style=social)](https://github.com/altegox/altego/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/altegox/altego?style=social)](https://github.com/altegox/altego/network/members)
 
-Altego 是一个用 **Java** 编写的 **AI Agent 框架**，开发者可以使用它快速接入 **ChatGPT、DeepSeek** 等大模型，并轻松创建自己的 AI 工作流。
+AltEgo 是一个用 **Java** 编写的 **AI Agent 框架**，开发者可以使用它快速接入 **ChatGPT、DeepSeek** 等大模型，并轻松创建自己的 AI 工作流。
 
 ## ✨ 特性
 - **快速接入大模型**：支持 ChatGPT、DeepSeek 等主流 LLM。
