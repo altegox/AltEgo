@@ -125,7 +125,7 @@ public class DefaultRequest {
         this.n = n;
     }
 
-    public Boolean getStream() {
+    public Boolean isStream() {
         return stream;
     }
 

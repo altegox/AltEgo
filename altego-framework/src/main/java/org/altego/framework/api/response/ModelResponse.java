@@ -1,28 +1,31 @@
 package org.altego.framework.api.response;
 
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 public class ModelResponse<T> {
 
     private Flux<T> stream;
 
-    private Mono<T> responseMono;
+    private T response;
 
     public Flux<T> stream() {
         return stream;
     }
 
-    public void stream(Flux<T> stream) {
-        this.stream = stream;
+    public T response() {
+        return response;
     }
 
-    public Mono<T> getResponseMono() {
-        return responseMono;
+    public static <T> ModelResponse<T> of(Flux<T> stream) {
+        ModelResponse<T> modelResponse = new ModelResponse<>();
+        modelResponse.stream = stream;
+        return modelResponse;
     }
 
-    public void setResponseMono(Mono<T> responseMono) {
-        this.responseMono = responseMono;
+    public static <T> ModelResponse<T> of(T response) {
+        ModelResponse<T> modelResponse = new ModelResponse<>();
+        modelResponse.response = response;
+        return modelResponse;
     }
 
 }

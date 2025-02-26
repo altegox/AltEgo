@@ -1,8 +1,8 @@
 package org.altego.framework.api;
 
+import org.altego.framework.api.request.DefaultRequest;
 import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
-import org.altego.framework.api.request.DefaultRequest;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,8 +30,20 @@ public class HttpClient {
                 .bodyValue(Json.toJson(baseRequest))
                 .retrieve()
                 .bodyToFlux(String.class)
+                .filter(data -> !"[DONE]".equals(data))
                 .doOnError(this::handleError)
                 .doFinally(this::handleFinally);
+    }
+
+    public <T extends DefaultRequest, R> Flux<R> post(T baseRequest, Class<R> responseType) {
+        return webClient.post()
+                .bodyValue(Json.toJson(baseRequest))
+                .retrieve()
+                .bodyToFlux(String.class)
+                .filter(data -> !"[DONE]".equals(data))
+                .doOnError(this::handleError)
+                .doFinally(this::handleFinally)
+                .map(response -> Json.fromJson(response, responseType));
     }
 
     public <T extends DefaultRequest> Mono<String> postSync(T baseRequest) {
