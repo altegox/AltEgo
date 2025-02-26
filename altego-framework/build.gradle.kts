@@ -1,9 +1,9 @@
 plugins {
-    id("java")
+    id("java-library")
     id("maven-publish")
 }
 
-group = "org.altego"
+group = "org.altegox"
 version = "0.0.1-beta"
 
 repositories {
@@ -11,10 +11,11 @@ repositories {
 }
 
 dependencies {
+    api(project(":altego-common"))
+    implementation("io.github.classgraph:classgraph:4.8.177")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-
-    implementation(project(":altego-framework"))
 }
 
 tasks.test {
@@ -26,7 +27,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = "org.altegox"
-            artifactId = "api-openai"
+            artifactId = "altego"
             version = "0.0.1-beta"
         }
     }

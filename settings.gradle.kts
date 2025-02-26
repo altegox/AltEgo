@@ -1,4 +1,4 @@
-rootProject.name = "rangenx"
-include("rangenx-framework")
-include("rangenx-common")
+rootProject.name = "altego"
+include("altego-framework")
+include("altego-common")
 include("api-openai")

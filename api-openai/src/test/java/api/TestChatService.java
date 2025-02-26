@@ -1,16 +1,16 @@
 package api;
 
 import org.junit.jupiter.api.Test;
-import org.rangenx.api.OpenaiClient;
-import org.rangenx.model.OpenaiModel;
+import org.altego.api.OpenaiClient;
+import org.altego.model.OpenaiModel;
 
 public class TestChatService {
 
     @Test
     void testchat() {
         OpenaiModel model = OpenaiModel.builder()
-                .baseUrl("https://yunwu.ai/v1/chat/completions")
-                .apiKey("sk-nGixhq1saUIgfX7YskwusqFDNUbHqOOtWccHLaCm5MKpxK4u")
+                .baseUrl("")
+                .apiKey("")
                 .modelName("gpt-4o-mini")
                 .stream(false)
                 .build();
