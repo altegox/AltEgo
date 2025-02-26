@@ -5,7 +5,7 @@ import org.altego.framework.api.request.DefaultRequest;
 
 public class OpenaiModel extends LangModel {
 
-    DefaultRequest requestParam;
+    private DefaultRequest requestParam;
 
     public OpenaiModel() {
         super();
