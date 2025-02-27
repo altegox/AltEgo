@@ -1,4 +1,4 @@
-package org.altego.model;
+package org.altego.api;
 
 import org.altego.framework.api.LangModel;
 import org.altego.framework.api.request.DefaultRequest;
@@ -15,7 +15,8 @@ public class OpenaiModel extends LangModel {
         return requestParam;
     }
 
-    public OpenaiModel(String baseUrl, String apiKey, String modelName, boolean stream, DefaultRequest requestParam) {
+    public OpenaiModel(String baseUrl, String apiKey, String modelName, boolean stream,
+                       DefaultRequest requestParam) {
         super(baseUrl, apiKey, modelName, stream);
         this.requestParam = requestParam;
     }
