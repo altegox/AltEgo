@@ -1,5 +1,7 @@
 package org.altego.framework.toolcall;
 
+import com.google.gson.Gson;
+
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -90,9 +92,9 @@ public class ToolEntity {
         }
     }
 
-    public record Property(String name, String type, String description) {
-        public static Property of(String name, String type, String description) {
-            return new Property(name, type, description);
+    public record Property(String type, String description) {
+        public static Property of(String type, String description) {
+            return new Property(type, description);
         }
     }
 
