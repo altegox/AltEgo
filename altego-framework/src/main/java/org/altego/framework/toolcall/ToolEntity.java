@@ -1,29 +1,37 @@
 package org.altego.framework.toolcall;
 
-import com.google.gson.Gson;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 
 public class ToolEntity {
 
     private final String type;
+    private final Function function;
     private final transient Method method;
-    private final String name;
-    private final String description;
     private final transient String signature;
-    private final ToolParameters parameters;
 
-    public ToolEntity(String type, Method method, String name, String description, String signature, ToolParameters parameters) {
-        this.type = (type == null ? "function" : type);
-        this.method = method;
-        this.name = name;
-        this.description = description;
-        this.signature = signature;
-        this.parameters = parameters;
+    public static class Function {
+        private final String name;
+        private final String description;
+        private final ToolParameters parameters;
+
+        public Function(String name, String description, ToolParameters parameters) {
+            this.name = name;
+            this.description = description;
+            this.parameters = parameters;
+        }
     }
 
-    public static ToolEntity of(String type, Method method, String toolName, String description, ToolParameters parameters) {
+    public ToolEntity(String type, Method method, String name, String description, String signature,
+                      ToolParameters parameters) {
+        this.type = (type == null ? "function" : type);
+        this.method = method;
+        this.function = new Function(name, description, parameters);
+        this.signature = signature;
+    }
+
+    public static ToolEntity of(String type, Method method, String toolName, String description,
+                                ToolParameters parameters) {
         return new ToolEntity(type, method, toolName, description, ToolSigner.sign(method), parameters);
     }
 
@@ -44,11 +52,11 @@ public class ToolEntity {
     }
 
     public String toolName() {
-        return name;
+        return function.name;
     }
 
     public String description() {
-        return description;
+        return function.description;
     }
 
     public String signature() {
@@ -56,7 +64,7 @@ public class ToolEntity {
     }
 
     public ToolParameters parameters() {
-        return parameters;
+        return function.parameters;
     }
 
     public static class ToolParameters {
@@ -77,6 +85,10 @@ public class ToolEntity {
 
         public static ToolParameters of(Map<String, Property> properties, String[] required) {
             return new ToolParameters(properties, required);
+        }
+
+        public static ToolParameters of(String type, Map<String, Property> properties, String[] required) {
+            return new ToolParameters(type, properties, required);
         }
 
         public String type() {
