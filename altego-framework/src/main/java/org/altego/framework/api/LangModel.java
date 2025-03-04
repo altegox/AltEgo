@@ -1,17 +1,23 @@
 package org.altego.framework.api;
 
+import java.util.function.Supplier;
+
 public class LangModel {
 
     private String baseUrl;
     private String apiKey;
     private String modelName;
     private boolean stream;
+    private LangModel reasonerModel;
+    private LangModel generateModel;
 
     private LangModel(Builder builder) {
         this.baseUrl = builder.baseUrl;
         this.apiKey = builder.apiKey;
         this.modelName = builder.modelName;
         this.stream = builder.stream;
+        this.reasonerModel = builder.reasonerModel;
+        this.generateModel = builder.generateModel;
     }
 
     public LangModel(String baseUrl, String apiKey, String modelName, boolean stream) {
@@ -28,32 +34,24 @@ public class LangModel {
         return baseUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
     public String getApiKey() {
         return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
     }
 
     public String getModelName() {
         return modelName;
     }
 
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
     public boolean isStream() {
         return stream;
     }
 
-    public void setStream(boolean stream) {
-        this.stream = stream;
+    public LangModel getReasonerModel() {
+        return reasonerModel;
+    }
+
+    public LangModel getGenerateModel() {
+        return generateModel;
     }
 
     @Override
@@ -63,6 +61,10 @@ public class LangModel {
                 ", apiKey='" + apiKey + '\'' +
                 ", modelName='" + modelName + '\'' +
                 ", stream=" + stream +
+                ", reasonerModel=" + (reasonerModel != null ? reasonerModel.getClass().getSimpleName() +
+                " (" + reasonerModel.getModelName() + ")" : "null") +
+                ", generateModel=" + (generateModel != null ? generateModel.getClass().getSimpleName() +
+                " (" + generateModel.getModelName() + ")" : "null") +
                 '}';
     }
 
@@ -72,6 +74,8 @@ public class LangModel {
         private String apiKey;
         private String modelName;
         private boolean stream;
+        private LangModel reasonerModel;
+        private LangModel generateModel;
 
         public Builder baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
@@ -93,13 +97,30 @@ public class LangModel {
             return this;
         }
 
+        public Builder combine(LangModel reasonerModel, LangModel generateModel) {
+            this.reasonerModel = reasonerModel;
+            this.generateModel = generateModel;
+
+            if (this.reasonerModel != null && this.generateModel != null) {
+                applyConfig(this.reasonerModel);
+                applyConfig(this.generateModel);
+            }
+            return this;
+        }
+
+        private void applyConfig(LangModel model) {
+            model.baseUrl = this.baseUrl == null ? model.baseUrl : this.baseUrl;
+            model.apiKey = this.apiKey == null ? model.apiKey : this.apiKey;
+            model.stream = this.stream;
+        }
+
         public LangModel build() {
             return new LangModel(this);
         }
+
     }
 
     public static Builder builder() {
         return new Builder();
     }
-
 }

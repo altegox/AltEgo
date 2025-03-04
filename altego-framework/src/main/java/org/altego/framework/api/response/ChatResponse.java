@@ -187,14 +187,33 @@ public class ChatResponse {
     }
 
     public static class Delta {
+        private String role;
         private String content;
+        @SerializedName("reasoning_content")
+        private String reasoningContent;
 
         public String getContent() {
             return content;
         }
 
+        public String getRole() {
+            return role;
+        }
+
+        public String getReasoningContent() {
+            return reasoningContent;
+        }
+
         public void setContent(String content) {
             this.content = content;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public void setReasoningContent(String reasoningContent) {
+            this.reasoningContent = reasoningContent;
         }
 
         @Override

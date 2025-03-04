@@ -1,6 +1,6 @@
 package org.altego.framework.client;
 
-import org.altego.framework.api.ChatListener;
+import org.altego.framework.client.listener.ChatListener;
 import org.altego.framework.api.HttpClient;
 import org.altego.framework.api.LangModel;
 import org.altego.framework.api.request.DefaultRequest;
@@ -65,6 +65,10 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
             httpClient.postSync(request, ChatResponse.class, listener);
             return ModelResponse.of(listener.onFinish());
         }
+    }
+
+    private boolean isCombineModel(LangModel model) {
+        return model.getReasonerModel() != null && model.getGenerateModel() != null;
     }
 
 }

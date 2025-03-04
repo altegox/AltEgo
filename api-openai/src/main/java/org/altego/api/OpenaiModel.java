@@ -15,6 +15,10 @@ public class OpenaiModel extends LangModel {
         return requestParam;
     }
 
+    public OpenaiModel(String baseUrl, String apiKey, String modelName, boolean stream) {
+        super(baseUrl, apiKey, modelName, stream);
+    }
+
     public OpenaiModel(String baseUrl, String apiKey, String modelName, boolean stream,
                        DefaultRequest requestParam) {
         super(baseUrl, apiKey, modelName, stream);

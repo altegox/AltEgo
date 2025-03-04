@@ -16,6 +16,14 @@ public class ModelResponse<T> {
         return response;
     }
 
+    public void setStream(Flux<T> stream) {
+        this.stream = stream;
+    }
+
+    public void setResponse(T response) {
+        this.response = response;
+    }
+
     public static <T> ModelResponse<T> of(Flux<T> stream) {
         ModelResponse<T> modelResponse = new ModelResponse<>();
         modelResponse.stream = stream;

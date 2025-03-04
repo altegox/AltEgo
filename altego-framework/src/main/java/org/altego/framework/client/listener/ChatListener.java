@@ -1,20 +1,25 @@
-package org.altego.framework.api;
+package org.altego.framework.client.listener;
 
-import java.util.concurrent.CompletableFuture;
+public class ChatListener<T> extends AbstractListener<T> {
 
-public class ChatListener<T> {
+    @Override
+    public void onNext(T response) {
+        futureResponse.complete(response);
+    }
 
-    private final CompletableFuture<T> futureResponse = new CompletableFuture<>();
-
+    @Override
     public void onSuccess(T response) {
         futureResponse.complete(response);
     }
 
+    @Override
     public void onError(Throwable error) {
         futureResponse.completeExceptionally(error);
     }
 
+    @Override
     public T onFinish() {
         return futureResponse.join();
     }
+
 }

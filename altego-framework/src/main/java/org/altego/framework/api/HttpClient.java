@@ -1,6 +1,7 @@
 package org.altego.framework.api;
 
 import org.altego.framework.api.request.DefaultRequest;
+import org.altego.framework.client.listener.AbstractListener;
 import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
 
@@ -46,6 +47,18 @@ public class HttpClient {
                 .map(response -> Json.fromJson(response, responseType));
     }
 
+    public <T extends DefaultRequest, R> Flux<R> post(T baseRequest, Class<R> responseType, AbstractListener<R> listener) {
+        return webClient.post()
+                .bodyValue(Json.toJson(baseRequest))
+                .retrieve()
+                .bodyToFlux(String.class)
+                .filter(data -> !"[DONE]".equals(data))
+//                .doOnNext(data -> listener.onNext(Json.fromJson(data, responseType)))
+                .doOnError(listener::onError)
+                .doOnComplete(listener::onFinish)
+                .map(response -> Json.fromJson(response, responseType));
+    }
+
     public <T extends DefaultRequest> Mono<String> postSync(T baseRequest) {
         return webClient.post()
                 .bodyValue(Json.toJson(baseRequest))
@@ -65,7 +78,7 @@ public class HttpClient {
                 .map(response -> Json.fromJson(response, responseType));
     }
 
-    public <T extends DefaultRequest, R> void postSync(T baseRequest, Class<R> responseType, ChatListener<R> listener) {
+    public <T extends DefaultRequest, R> void postSync(T baseRequest, Class<R> responseType, AbstractListener<R> listener) {
         webClient.post()
                 .bodyValue(Json.toJson(baseRequest))
                 .retrieve()
