@@ -88,19 +88,20 @@ public class CombinationClient implements ChatService<ChatResponse> {
                 .messages(messages)
                 .build();
 
-        StringBuilder reasoningContentBuffer = new StringBuilder();
+        StringBuilder reasoningContentBuffer = new StringBuilder("<think>");
 
         Flux<ChatResponse> reasonerStream = reasonerClient.post(reasonerRequest, ChatResponse.class)
                 .takeWhile(response -> {
-                    System.out.println(response);
                     String rc = Optional.ofNullable(response)
                             .map(ChatResponse::getChoices)
                             .filter(choices -> !choices.isEmpty())
                             .map(choices -> choices.getFirst().getDelta())
                             .map(ChatResponse.Delta::getReasoningContent)
                             .orElse(null);
+
                     if (rc == null && (response.getChoices().getFirst().getDelta().getContent() != null
                             || response.getChoices().getFirst().getMessage().getContent() != null)) {
+                        reasoningContentBuffer.append("</think>\n");
                         return false;
                     } else {
                         reasoningContentBuffer.append(rc);
@@ -110,7 +111,7 @@ public class CombinationClient implements ChatService<ChatResponse> {
 
         Flux<ChatResponse> generatorStream = Flux.defer(() -> {
             String originContent = messages.getLast().getContent();
-            String newContent = "<think>" + reasoningContentBuffer + "</think>\n" + originContent;
+            String newContent = reasoningContentBuffer + originContent;
             messages.getLast().setContent(newContent);
             DefaultRequest generateRequest = DefaultRequest.builder()
                     .model(model.getGenerateModel().getModelName())
@@ -135,14 +136,52 @@ public class CombinationClient implements ChatService<ChatResponse> {
     // todo: 适配
     @Override
     public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
-        if (request == null) throw new IllegalArgumentException("request is null");
+        boolean isStream = model.isStream();
 
-        if (model.isStream() || request.isStream()) {
-            return ModelResponse.of(reasonerClient.post(request, ChatResponse.class));
-        } else {
-            reasonerClient.postSync(request, ChatResponse.class, listener);
-            return ModelResponse.of(listener.onFinish());
-        }
+        StringBuilder reasoningContentBuffer = new StringBuilder("<think>");
+
+        Flux<ChatResponse> reasonerStream = reasonerClient.post(request, ChatResponse.class)
+                .takeWhile(response -> {
+                    String rc = Optional.ofNullable(response)
+                            .map(ChatResponse::getChoices)
+                            .filter(choices -> !choices.isEmpty())
+                            .map(choices -> choices.getFirst().getDelta())
+                            .map(ChatResponse.Delta::getReasoningContent)
+                            .orElse(null);
+
+                    if (rc == null && (response.getChoices().getFirst().getDelta().getContent() != null
+                            || response.getChoices().getFirst().getMessage().getContent() != null)) {
+                        reasoningContentBuffer.append("</think>\n");
+                        return false;
+                    } else {
+                        reasoningContentBuffer.append(rc);
+                        return true;
+                    }
+                });
+
+        Flux<ChatResponse> generatorStream = Flux.defer(() -> {
+            List<Message> messages = request.getMessages();
+            String originContent = messages.getLast().getContent();
+            String newContent = reasoningContentBuffer + originContent;
+            messages.getLast().setContent(newContent);
+            DefaultRequest generateRequest = DefaultRequest.builder()
+                    .model(model.getGenerateModel().getModelName())
+                    .stream(isStream)
+                    .messages(messages)
+                    .build();
+
+//            if (isStream) {
+            // 暂时只支持 流式响应
+            return generateClient.post(generateRequest, ChatResponse.class);
+//            } else {
+//                generateClient.postSync(generateRequest, ChatResponse.class, listener);
+//                return Flux.just(listener.onFinish());
+//            }
+        });
+
+        Flux<ChatResponse> responseStream = reasonerStream.concatWith(generatorStream);
+
+        return ModelResponse.of(responseStream);
     }
 
 }

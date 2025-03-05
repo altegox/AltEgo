@@ -9,8 +9,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/altego-agent" />
-            <option value="$PROJECT_DIR$/altego-combination" />
             <option value="$PROJECT_DIR$/altego-common" />
             <option value="$PROJECT_DIR$/altego-framework" />
             <option value="$PROJECT_DIR$/api-openai" />
