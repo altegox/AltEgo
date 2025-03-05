@@ -1,7 +1,7 @@
 package org.altego.framework.api;
 
 import org.altego.framework.api.request.DefaultRequest;
-import org.altego.framework.client.listener.AbstractListener;
+import org.altego.framework.service.listener.AbstractListener;
 import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
 

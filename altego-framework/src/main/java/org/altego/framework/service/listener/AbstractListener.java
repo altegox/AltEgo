@@ -1,4 +1,4 @@
-package org.altego.framework.client.listener;
+package org.altego.framework.service.listener;
 
 import java.util.concurrent.CompletableFuture;
 

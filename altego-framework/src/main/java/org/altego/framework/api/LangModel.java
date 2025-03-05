@@ -1,7 +1,6 @@
 package org.altego.framework.api;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class LangModel {
 
@@ -43,7 +42,9 @@ public class LangModel {
     public void setStream(boolean stream) { this.stream = stream; }
 
     public LangModel getReasonerModel() { return reasonerModel; }
+    public void setReasonerModel(LangModel reasonerModel) { this.reasonerModel = reasonerModel; }
     public LangModel getGenerateModel() { return generateModel; }
+    public void setGenerateModel(LangModel generateModel) { this.generateModel = generateModel; }
 
     @Override
     public String toString() {
@@ -90,8 +91,8 @@ public class LangModel {
             return this;
         }
 
-        public Builder reasoner(Function<LangModel, LangModel> configurator) {
-            this.reasonerModel = configurator.apply(new LangModel());
+        public Builder reasoner(Function<LangModel, LangModel> reasonerModel) {
+            this.reasonerModel = reasonerModel.apply(new LangModel());
             return this;
         }
 
@@ -100,8 +101,8 @@ public class LangModel {
             return this;
         }
 
-        public Builder generate(Function<LangModel, LangModel> configurator) {
-            this.generateModel = configurator.apply(new LangModel());
+        public Builder generate(Function<LangModel, LangModel> generateModel) {
+            this.generateModel = generateModel.apply(new LangModel());
             return this;
         }
 

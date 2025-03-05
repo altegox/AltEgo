@@ -1,4 +1,4 @@
-package org.altego.framework.client.listener;
+package org.altego.framework.service.listener;
 
 public class ChatListener<T> extends AbstractListener<T> {
 

@@ -1,6 +1,6 @@
 package org.altego.framework.client;
 
-import org.altego.framework.client.listener.ChatListener;
+import org.altego.framework.service.listener.ChatListener;
 import org.altego.framework.api.HttpClient;
 import org.altego.framework.api.LangModel;
 import org.altego.framework.api.request.DefaultRequest;
