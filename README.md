@@ -1,42 +1,67 @@
+# ✨ AltEgo —— Create Another You ✨
 
-# AltEgo
-
-# ![AltEgo](img/altego-title.jpg)
+![AltEgo](img/altego-title.jpg)
 
 [![License](https://img.shields.io/github/license/altegox/altego)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/altegox/altego?style=social)](https://github.com/altegox/altego/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/altegox/altego?style=social)](https://github.com/altegox/altego/network/members)
 
-AltEgo 是一个用 **Java** 编写的 **AI Agent 框架**，开发者可以使用它快速接入 **ChatGPT、DeepSeek** 等大模型，并轻松创建自己的 AI 工作流。
+## 🔍 项目简介
 
-## ✨ 特性
+**AltEgo** 的名称来源于 “Alter Ego”，即 “另一个我”。
+
+AltEgo 是一个基于 **Java** 开发的 **AI Agent 框架**，能够帮助开发者快速接入 **ChatGPT、DeepSeek** 等大模型。其灵活的架构支持模型的组合调用，并能轻松创建和管理自定义 AI 工作流。
+
+## ✨ 主要特性
+
 - **快速接入大模型**：支持 ChatGPT、DeepSeek 等主流 LLM。
-- **可扩展 AI Agent**：灵活的插件式架构，轻松集成自定义功能。
-- **流式处理**：支持异步和流式数据处理，响应速度快。
+- **可扩展 AI Agent**：采用插件式架构，便于集成自定义功能。
+- **支持模型组合调用**：可以组合不同模型，如 DeepSeek Reasoner 和 OpenAI GPT。
+- **流式数据处理**：支持异步与流式调用，提高响应速度。
+- **易于部署与集成**：兼容 Spring Boot 和其他 Java 生态工具。
+
+---
 
 ## 🚀 安装与使用
 
-### 1️⃣ 添加依赖
-在 **Maven** 或 **Gradle** 项目中引入：
+### 1️⃣ 先决条件
 
-#### Maven
+- **JDK 21 或更高版本**
+- **Maven 或 Gradle 构建工具**
+- **可用的大模型 API Key（如 OpenAI、DeepSeek）**
+
+### 2️⃣ 添加依赖
+
+#### 使用 Maven
 ```xml
-  暂未提供
+<!-- 暂未提供 -->
+<dependency>
+  <groupId>org.altegox</groupId>
+  <artifactId>altego-framework</artifactId>
+  <version>0.0.1-bata</version>
+</dependency>
+
+<dependency>
+  <groupId>org.altegox</groupId>
+  <artifactId>altego-openai</artifactId>
+  <version>0.0.1-bata</version>
+</dependency>
 ```
 
-#### Gradle
+#### 使用 Gradle
 ```gradle
+// 暂未提供
 dependencies {
-  暂未提供
+    implementation 'org.altegox:altego-framework:0.0.1-bata'
+    implementation 'org.altegox:altego-openai:0.0.1-bata'
 }
 ```
 
-### 2️⃣ 快速开始
-使用 Altego 连接 ChatGPT 并发送消息：
+### 3️⃣ 快速开始
 
+#### **示例：连接 ChatGPT 并发送消息**
 ```java
 public class TestChatService {
-
     @Test
     void easyChat() {
         OpenaiModel model = OpenaiModel.builder()
@@ -47,55 +72,107 @@ public class TestChatService {
                 .build();
 
         OpenaiClient client = OpenaiClient.create(model);
-        String response = client.chat("你好");
+        String response = client.generate("你好");
         System.out.println(response);
     }
-
-    /* 非流式调用 */
-    @Test
-    void syncChat() {
-        OpenaiModel model = OpenaiModel.builder()
-                .baseUrl(System.getenv("OPENAI_BASE_URL"))
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .modelName("gpt-4o-mini")
-                .stream(false)
-                .build();
-
-        OpenaiClient client = OpenaiClient.create(model);
-        ModelResponse<ChatResponse> response = client.chat(List.of(
-                Message.user("你好"),
-                Message.assistant("我是你的智能助手。"),
-                Message.user("你是哪个模型？")
-        ));
-        System.out.println(response.response());
-    }
-
-    /* 流式调用 */
-    @Test
-    void streamChat() {
-        OpenaiModel model = OpenaiModel.builder()
-                .baseUrl(System.getenv("OPENAI_BASE_URL"))
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .modelName("gpt-4o-mini")
-                .stream(true)
-                .build();
-
-        OpenaiClient client = OpenaiClient.create(model);
-        ModelResponse<ChatResponse> response = client.chat(List.of(
-                Message.user("你好"),
-                Message.assistant("我是你的智能助手。"),
-                Message.user("你是哪个模型？")
-        ));
-        response.stream().subscribe(chatResponse -> {
-            System.out.println(chatResponse.toString());
-        });
-    }
-
 }
 ```
 
-## 🤝 贡献
-欢迎贡献代码、优化文档或提交 Issue：
+#### **示例：非流式调用**
+```java
+@Test
+void syncChat() {
+    OpenaiModel model = OpenaiModel.builder()
+            .baseUrl(System.getenv("OPENAI_BASE_URL"))
+            .apiKey(System.getenv("OPENAI_API_KEY"))
+            .modelName("gpt-4o-mini")
+            .stream(false)
+            .build();
+
+    OpenaiClient client = OpenaiClient.create(model);
+    ModelResponse<ChatResponse> response = client.chat(List.of(
+            Message.user("你好"),
+            Message.assistant("我是你的智能助手。"),
+            Message.user("你是哪个模型？")
+    ));
+    System.out.println(response.response());
+}
+```
+
+#### **示例：流式调用**
+```java
+@Test
+void streamChat() {
+    OpenaiModel model = OpenaiModel.builder()
+            .baseUrl(System.getenv("OPENAI_BASE_URL"))
+            .apiKey(System.getenv("OPENAI_API_KEY"))
+            .modelName("gpt-4o-mini")
+            .stream(true)
+            .build();
+
+    OpenaiClient client = OpenaiClient.create(model);
+    ModelResponse<ChatResponse> response = client.chat(List.of(
+            Message.user("你好"),
+            Message.assistant("我是你的智能助手。"),
+            Message.user("你是哪个模型？")
+    ));
+    response.stream().subscribe(chatResponse -> {
+        System.out.println(chatResponse.toString());
+    });
+}
+```
+
+#### **示例：组合调用（DeepClaude 形式）**
+```java
+@Test
+void combinationChat() {
+    LangModel model = OpenaiModel.builder()
+            .stream(true)
+            .reasoner(reasoner -> {
+                reasoner.setBaseUrl(System.getenv("DEEPSEEK_BASE_URL"));
+                reasoner.setApiKey(System.getenv("DEEPSEEK_API_KEY"));
+                reasoner.setModelName("deepseek-reasoner");
+                return reasoner;
+            })
+            .generate(generate -> {
+                generate.setBaseUrl(System.getenv("OPENAI_BASE_URL"));
+                generate.setApiKey(System.getenv("OPENAI_API_KEY"));
+                generate.setModelName("gpt-4o");
+                return generate;
+            })
+            .build();
+
+    CombinationClient client = CombinationClient.create(model);
+    ModelResponse<ChatResponse> response = client.chat(List.of(Message.user("0.9和0.11哪个更大？")));
+    response.stream().subscribe(chatResponse -> {
+        if (chatResponse.getChoices().getFirst().getDelta().getReasoningContent() != null)
+            System.out.print(chatResponse.getChoices().getFirst().getDelta().getReasoningContent());
+        if (chatResponse.getChoices().getFirst().getDelta().getContent() != null)
+            System.out.print(chatResponse.getChoices().getFirst().getDelta().getContent());
+    });
+}
+```
+
+---
+
+## 🛠️ 配置
+
+建议在 `.env` 文件或系统环境变量中配置, 避免信息的泄漏：
+
+```env
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_API_KEY=your-api-key
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_API_KEY=your-api-key
+```
+
+---
+
+## 🤝 贡献指南
+
+欢迎贡献代码、优化文档或提交 Issue！
+
+### 贡献步骤
 1. **Fork 本仓库**
 2. **创建新分支** (`git checkout -b feature-xxx`)
 3. **提交修改** (`git commit -m 'Add new feature'`)
