@@ -1,13 +1,13 @@
 package org.altego.framework.client;
 
-import org.altego.framework.client.listener.AbstractListener;
+import org.altego.framework.service.listener.AbstractListener;
 import org.altego.framework.api.HttpClient;
 import org.altego.framework.api.LangModel;
 import org.altego.framework.api.request.DefaultRequest;
 import org.altego.framework.api.request.Message;
 import org.altego.framework.api.response.ChatResponse;
 import org.altego.framework.api.response.ModelResponse;
-import org.altego.framework.client.listener.ChatListener;
+import org.altego.framework.service.listener.ChatListener;
 import org.altego.framework.service.ChatService;
 import org.altegox.common.log.Log;
 import reactor.core.publisher.Flux;
@@ -59,7 +59,7 @@ public class CombinationClient implements ChatService<ChatResponse> {
                 .toString();
 
         reasonerContent = "<think>" + reasonerContent + "</think>";
-        Log.info("Reasoner response: {}", reasonerContent);
+        Log.debug("Reasoner response: {}", reasonerContent);
 
         // 构造生成模型请求
         DefaultRequest generateRequest = DefaultRequest.builder()
@@ -164,15 +164,10 @@ public class CombinationClient implements ChatService<ChatResponse> {
             String originContent = messages.getLast().getContent();
             String newContent = reasoningContentBuffer + originContent;
             messages.getLast().setContent(newContent);
-            DefaultRequest generateRequest = DefaultRequest.builder()
-                    .model(model.getGenerateModel().getModelName())
-                    .stream(isStream)
-                    .messages(messages)
-                    .build();
 
 //            if (isStream) {
             // 暂时只支持 流式响应
-            return generateClient.post(generateRequest, ChatResponse.class);
+            return generateClient.post(request, ChatResponse.class);
 //            } else {
 //                generateClient.postSync(generateRequest, ChatResponse.class, listener);
 //                return Flux.just(listener.onFinish());
