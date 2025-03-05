@@ -1,10 +1,18 @@
 # ✨ AltEgo —— Create Another You ✨
 
 ![AltEgo](img/altego-title.jpg)
-
-[![License](https://img.shields.io/github/license/altegox/altego)](LICENSE)
+<div align="center">
+  
 [![GitHub stars](https://img.shields.io/github/stars/altegox/altego?style=social)](https://github.com/altegox/altego/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/altegox/altego?style=social)](https://github.com/altegox/altego/network/members)
+
+[![License](https://img.shields.io/github/license/altegox/altego)](LICENSE)
+![COMMIT](https://img.shields.io/github/last-commit/altegox/altego?style=flat-square)
+![LANG](https://img.shields.io/badge/language-Java-7F52FF?style=flat-square)
+
+</div>
+
+---
 
 ## 🔍 项目简介
 
