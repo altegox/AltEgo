@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ChatService<T> {
 
-    String chat(String message);
+    String generate(String message);
 
     ModelResponse<T> chat(List<Message> messages);
 

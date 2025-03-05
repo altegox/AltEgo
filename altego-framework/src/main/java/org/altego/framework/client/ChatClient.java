@@ -24,7 +24,7 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
     }
 
     @Override
-    public String chat(String message) {
+    public String generate(String message) {
         DefaultRequest request = DefaultRequest.builder()
                 .model(model.getModelName())
                 .messages(List.of(Message.user(message)))

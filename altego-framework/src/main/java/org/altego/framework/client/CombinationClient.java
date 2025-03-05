@@ -39,7 +39,7 @@ public class CombinationClient implements ChatService<ChatResponse> {
     }
 
     @Override
-    public String chat(String message) {
+    public String generate(String message) {
         DefaultRequest reasonerRequest = DefaultRequest.builder()
                 .model(model.getReasonerModel().getModelName())
                 .stream(true) // 必须设置为 true 才返回推理内容
