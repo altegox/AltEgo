@@ -3,16 +3,16 @@ package org.altegox.api;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.altegox.common.utils.Json;
-import org.altego.framework.AltegoFramework;
-import org.altego.framework.api.HttpClient;
-import org.altego.framework.api.request.DefaultRequest;
-import org.altego.framework.api.request.Message;
-import org.altego.framework.api.response.DefaultChatResponse;
-import org.altego.framework.config.AltegoConfig;
+import org.altegox.framework.AltegoFramework;
+import org.altegox.framework.api.HttpClient;
+import org.altegox.framework.api.request.DefaultRequest;
+import org.altegox.framework.api.request.Message;
+import org.altegox.framework.api.response.DefaultChatResponse;
+import org.altegox.framework.config.AltegoConfig;
 
-import org.altego.framework.toolcall.CommandParser;
-import org.altego.framework.toolcall.caller.Caller;
-import org.altego.framework.toolcall.caller.ToolCaller;
+import org.altegox.framework.toolcall.CommandParser;
+import org.altegox.framework.toolcall.caller.Caller;
+import org.altegox.framework.toolcall.caller.ToolCaller;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

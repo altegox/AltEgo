@@ -1,8 +1,8 @@
 package org.altegox.toolcall;
 
-import org.altego.framework.annotation.Exclude;
-import org.altego.framework.annotation.Tool;
-import org.altego.framework.annotation.ToolCache;
+import org.altegox.framework.annotation.Exclude;
+import org.altegox.framework.annotation.Tool;
+import org.altegox.framework.annotation.ToolCache;
 
 import java.util.List;
 

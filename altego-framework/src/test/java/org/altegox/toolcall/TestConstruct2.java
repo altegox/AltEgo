@@ -1,6 +1,6 @@
 package org.altegox.toolcall;
 
-import org.altego.framework.annotation.Component;
+import org.altegox.framework.annotation.Component;
 
 @Component
 public class TestConstruct2 {

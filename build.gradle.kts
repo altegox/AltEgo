@@ -3,7 +3,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "org.altego"
+group = "org.altegox"
 version = "0.0.1-beta"
 
 subprojects {

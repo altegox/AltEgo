@@ -2,12 +2,12 @@ package org.altegox.toolcall;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.altego.framework.AltegoFramework;
+import org.altegox.framework.AltegoFramework;
 import org.altegox.common.log.Log;
 import org.altegox.common.exception.ToolNotFindException;
-import org.altego.framework.config.AltegoConfig;
-import org.altego.framework.toolcall.caller.Caller;
-import org.altego.framework.toolcall.caller.ToolCaller;
+import org.altegox.framework.config.AltegoConfig;
+import org.altegox.framework.toolcall.caller.Caller;
+import org.altegox.framework.toolcall.caller.ToolCaller;
 
 import java.util.Arrays;
 import java.util.List;

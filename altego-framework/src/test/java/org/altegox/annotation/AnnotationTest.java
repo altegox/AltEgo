@@ -2,12 +2,12 @@ package org.altegox.annotation;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.altego.framework.AltegoFramework;
+import org.altegox.framework.AltegoFramework;
 import org.altegox.common.log.Log;
-import org.altego.framework.config.AltegoConfig;
-import org.altego.framework.toolcall.ToolCacheManager;
-import org.altego.framework.toolcall.ToolEntity;
-import org.altego.framework.toolcall.ToolManager;
+import org.altegox.framework.config.AltegoConfig;
+import org.altegox.framework.toolcall.ToolCacheManager;
+import org.altegox.framework.toolcall.ToolEntity;
+import org.altegox.framework.toolcall.ToolManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
