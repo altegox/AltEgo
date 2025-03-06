@@ -161,6 +161,53 @@ void combinationChat() {
 }
 ```
 
+#### **示例：工具调用**
+```java
+// 在类上添加 @Tool 注解可将类中所有方法注册为tool
+@Tool
+public class Tools {
+    
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    // 在方法上添加 @Tool 注解将方法注册为tool
+    @Tool
+    public String getWeather(String city) {
+        return city + "天气为 多云";
+    }
+
+    // 排除此方法 不注册为tool
+    @Exclude
+    public void excludePrint() {
+        System.out.println("Exclude");
+    }
+
+    // 启用tool缓存，此tool允许在参数相同的情况下直接走缓存返回运行结果而并非真正运行
+    @ToolCache
+    public String cachePrint() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "useCache";
+    }
+
+    @ToolCache
+    @Exclude(annotation = ToolCache.class)
+    public String excludeCachePrint() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "noCache";
+    }
+
+}
+```
+
 ---
 
 ## 🛠️ 配置
