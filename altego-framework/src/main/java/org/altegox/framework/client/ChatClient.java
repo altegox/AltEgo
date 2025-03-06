@@ -1,5 +1,6 @@
 package org.altegox.framework.client;
 
+import org.altegox.common.utils.Json;
 import org.altegox.framework.service.listener.ChatListener;
 import org.altegox.framework.api.HttpClient;
 import org.altegox.framework.api.LangModel;
@@ -28,6 +29,7 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
         DefaultRequest request = DefaultRequest.builder()
                 .model(model.getModelName())
                 .messages(List.of(Message.user(message)))
+                .tools(model.getTools())
                 .build();
         httpClient.postSync(request, ChatResponse.class, listener);
         ChatResponse chatResponse = listener.onFinish();
@@ -46,7 +48,9 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
                 .model(model.getModelName())
                 .stream(model.isStream())
                 .messages(messages)
+                .tools(model.getTools())
                 .build();
+
         if (model.isStream()) {
             return ModelResponse.of(httpClient.post(request, ChatResponse.class));
         } else {

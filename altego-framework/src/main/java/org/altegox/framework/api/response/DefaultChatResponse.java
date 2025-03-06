@@ -163,7 +163,16 @@ public class DefaultChatResponse {
         private String content;
 
         @SerializedName("refusal")
-        private Object refusal; // 可以是 null
+        private String refusal; // 可能为 null
+
+        @SerializedName("audio")
+        private String audio; // 可能为 null
+
+        @SerializedName("function_call")
+        private String functionCall; // 可能为 null
+
+        @SerializedName("tool_calls")
+        private List<ToolCall> toolCalls; // 可能为 null
 
         // Getters and Setters
         public String getRole() {
@@ -186,8 +195,32 @@ public class DefaultChatResponse {
             return refusal;
         }
 
-        public void setRefusal(Object refusal) {
+        public void setRefusal(String refusal) {
             this.refusal = refusal;
+        }
+
+        public Object getAudio() {
+            return audio;
+        }
+
+        public void setAudio(String audio) {
+            this.audio = audio;
+        }
+
+        public Object getFunctionCall() {
+            return functionCall;
+        }
+
+        public void setFunctionCall(String functionCall) {
+            this.functionCall = functionCall;
+        }
+
+        public List<ToolCall> getToolCalls() {
+            return toolCalls;
+        }
+
+        public void setToolCalls(List<ToolCall> toolCalls) {
+            this.toolCalls = toolCalls;
         }
 
         @Override
@@ -196,9 +229,101 @@ public class DefaultChatResponse {
                     "role='" + role + '\'' +
                     ", content='" + content + '\'' +
                     ", refusal=" + refusal +
+                    ", audio=" + audio +
+                    ", functionCall=" + functionCall +
+                    ", toolCalls=" + toolCalls +
                     '}';
         }
+    }
 
+    public static class ToolCall {
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("function")
+        private FunctionCall function;
+
+        @SerializedName("type")
+        private String type;
+
+        @SerializedName("index")
+        private int index;
+
+        // Getters and Setters
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public FunctionCall getFunction() {
+            return function;
+        }
+
+        public void setFunction(FunctionCall function) {
+            this.function = function;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public String toString() {
+            return "ToolCall{" +
+                    "id='" + id + '\'' +
+                    ", function=" + function +
+                    ", type='" + type + '\'' +
+                    ", index=" + index +
+                    '}';
+        }
+    }
+
+    public static class FunctionCall {
+        @SerializedName("name")
+        private String name;
+
+        @SerializedName("arguments")
+        private String arguments;
+
+        // Getters and Setters
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(String arguments) {
+            this.arguments = arguments;
+        }
+
+        @Override
+        public String toString() {
+            return "FunctionCall{" +
+                    "name='" + name + '\'' +
+                    ", arguments='" + arguments + '\'' +
+                    '}';
+        }
     }
 
     public static class Usage {

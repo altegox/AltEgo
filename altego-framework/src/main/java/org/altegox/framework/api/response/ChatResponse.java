@@ -316,6 +316,11 @@ public class ChatResponse {
         private String content;
         private Object refusal;
         private String role;
+        @SerializedName("tool_calls")
+        private List<ToolCall> toolCalls;
+        @SerializedName("function_call")
+        private FunctionCall functionCall;
+        private String audio;
 
         //region Message getter and setter
         public String getContent() {
@@ -342,6 +347,30 @@ public class ChatResponse {
             this.role = role;
         }
 
+        public List<ToolCall> getToolCalls() {
+            return toolCalls;
+        }
+
+        public void setToolCalls(List<ToolCall> toolCalls) {
+            this.toolCalls = toolCalls;
+        }
+
+        public FunctionCall getFunctionCall() {
+            return functionCall;
+        }
+
+        public void setFunctionCall(FunctionCall functionCall) {
+            this.functionCall = functionCall;
+        }
+
+        public String getAudio() {
+            return audio;
+        }
+
+        public void setAudio(String audio) {
+            this.audio = audio;
+        }
+
         //endregion
 
         @Override
@@ -350,6 +379,99 @@ public class ChatResponse {
                     "content='" + content + '\'' +
                     ", refusal=" + refusal +
                     ", role='" + role + '\'' +
+                    ", toolCalls=" + toolCalls +
+                    ", functionCall=" + functionCall +
+                    ", audio='" + audio + '\'' +
+                    '}';
+        }
+    }
+
+    public static class ToolCall {
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("function")
+        private FunctionCall function;
+
+        @SerializedName("type")
+        private String type;
+
+        @SerializedName("index")
+        private int index;
+
+        // Getters and Setters
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public FunctionCall getFunction() {
+            return function;
+        }
+
+        public void setFunction(FunctionCall function) {
+            this.function = function;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public String toString() {
+            return "ToolCall{" +
+                    "id='" + id + '\'' +
+                    ", function=" + function +
+                    ", type='" + type + '\'' +
+                    ", index=" + index +
+                    '}';
+        }
+    }
+
+    public static class FunctionCall {
+        @SerializedName("name")
+        private String name;
+
+        @SerializedName("arguments")
+        private String arguments;
+
+        // Getters and Setters
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(String arguments) {
+            this.arguments = arguments;
+        }
+
+        @Override
+        public String toString() {
+            return "FunctionCall{" +
+                    "name='" + name + '\'' +
+                    ", arguments='" + arguments + '\'' +
                     '}';
         }
     }

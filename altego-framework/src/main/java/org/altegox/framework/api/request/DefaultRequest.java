@@ -1,6 +1,7 @@
 package org.altegox.framework.api.request;
 
 import com.google.gson.annotations.SerializedName;
+import org.altegox.framework.toolcall.ToolEntity;
 
 import java.util.List;
 
@@ -11,6 +12,9 @@ public class DefaultRequest {
 
     // 模型名称
     private String model;
+
+    // 工具
+    private List<ToolEntity> tools;
 
     // 聊天消息列表
     private List<Message> messages;
@@ -50,12 +54,13 @@ public class DefaultRequest {
     public DefaultRequest() {
     }
 
-    public DefaultRequest(String model, String user, List<Message> messages, Integer maxTokens, Double temperature,
+    public DefaultRequest(String model, String user, List<Message> messages, List<ToolEntity> tools, Integer maxTokens, Double temperature,
                           Double topP, Integer n, Boolean stream, String stop,
                           Double presencePenalty, Double frequencyPenalty, String logitBias) {
         this.model = model;
         this.user = user;
         this.messages = messages;
+        this.tools = tools;
         this.maxTokens = maxTokens;
         this.temperature = temperature;
         this.topP = topP;
@@ -91,6 +96,14 @@ public class DefaultRequest {
 
     public void setMessages(List<Message> messages) {
         this.messages = messages;
+    }
+
+    public List<ToolEntity> getTools() {
+        return tools;
+    }
+
+    public void setTools(List<ToolEntity> tools) {
+        this.tools = tools;
     }
 
     public Integer getMaxTokens() {
@@ -170,6 +183,7 @@ public class DefaultRequest {
         return "ChatGPTRequest {" +
                 "model='" + model + '\'' +
                 ", messages=" + messages +
+                ", tools=" + tools +
                 ", user='" + user + '\'' +
                 ", maxTokens=" + maxTokens +
                 ", temperature=" + temperature +
@@ -187,6 +201,7 @@ public class DefaultRequest {
         private String model;
         private String user;
         private List<Message> messages;
+        private List<ToolEntity> tools;
         private Integer maxTokens;
         private Double temperature;
         private Double topP;
@@ -209,6 +224,11 @@ public class DefaultRequest {
 
         public Builder messages(List<Message> messages) {
             this.messages = messages;
+            return this;
+        }
+
+        public Builder tools(List<ToolEntity> tools) {
+            this.tools = tools;
             return this;
         }
 
@@ -258,7 +278,7 @@ public class DefaultRequest {
         }
 
         public DefaultRequest build() {
-            return new DefaultRequest(model, user, messages, maxTokens, temperature, topP, n, stream, stop,
+            return new DefaultRequest(model, user, messages, tools, maxTokens, temperature, topP, n, stream, stop,
                     presencePenalty, frequencyPenalty, logitBias);
         }
 
