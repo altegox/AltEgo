@@ -7,8 +7,8 @@ public class ToolEntity {
 
     private final String type;
     private final Function function;
-    private final transient Method method;
-    private final transient String signature;
+    private transient Method method;
+    private transient String signature;
 
     public static class Function {
         private final String name;
@@ -20,6 +20,10 @@ public class ToolEntity {
             this.description = description;
             this.parameters = parameters;
         }
+
+        public static Function of(String name, String description, ToolParameters parameters) {
+            return new Function(name, description, parameters);
+        }
     }
 
     public ToolEntity(String type, Method method, String name, String description, String signature,
@@ -30,9 +34,27 @@ public class ToolEntity {
         this.signature = signature;
     }
 
+    public ToolEntity(String type, Function function) {
+        this.type = (type == null ? "function" : type);
+        this.function = function;
+    }
+
+    public ToolEntity(Function function) {
+        this.type = "function";
+        this.function = function;
+    }
+
     public static ToolEntity of(String type, Method method, String toolName, String description,
                                 ToolParameters parameters) {
         return new ToolEntity(type, method, toolName, description, ToolSigner.sign(method), parameters);
+    }
+
+    public static ToolEntity of(String type, Function function) {
+        return new ToolEntity(type, function);
+    }
+
+    public static ToolEntity of(Function function) {
+        return new ToolEntity(function);
     }
 
     public static ToolEntity of(Method method, String toolName, String description, ToolParameters parameters) {
