@@ -190,6 +190,9 @@ public class ChatResponse {
     public static class Delta {
         private String role;
         private String content;
+        private String refusal;
+        @SerializedName("tool_calls")
+        private List<ChatResponse.ToolCall> toolCalls;
         @SerializedName("reasoning_content")
         private String reasoningContent;
 
