@@ -1,6 +1,7 @@
 package org.altegox.framework.api.response;
 
 import com.google.gson.annotations.SerializedName;
+import org.altegox.framework.api.request.Message;
 
 import java.util.List;
 
@@ -312,91 +313,10 @@ public class ChatResponse {
         }
     }
 
-    public static class Message {
-        private String content;
-        private Object refusal;
-        private String role;
-        @SerializedName("tool_calls")
-        private List<ToolCall> toolCalls;
-        @SerializedName("function_call")
-        private FunctionCall functionCall;
-        private String audio;
-
-        //region Message getter and setter
-        public String getContent() {
-            return content;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        public Object getRefusal() {
-            return refusal;
-        }
-
-        public void setRefusal(Object refusal) {
-            this.refusal = refusal;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public List<ToolCall> getToolCalls() {
-            return toolCalls;
-        }
-
-        public void setToolCalls(List<ToolCall> toolCalls) {
-            this.toolCalls = toolCalls;
-        }
-
-        public FunctionCall getFunctionCall() {
-            return functionCall;
-        }
-
-        public void setFunctionCall(FunctionCall functionCall) {
-            this.functionCall = functionCall;
-        }
-
-        public String getAudio() {
-            return audio;
-        }
-
-        public void setAudio(String audio) {
-            this.audio = audio;
-        }
-
-        //endregion
-
-        @Override
-        public String toString() {
-            return "Message{" +
-                    "content='" + content + '\'' +
-                    ", refusal=" + refusal +
-                    ", role='" + role + '\'' +
-                    ", toolCalls=" + toolCalls +
-                    ", functionCall=" + functionCall +
-                    ", audio='" + audio + '\'' +
-                    '}';
-        }
-    }
-
     public static class ToolCall {
-        @SerializedName("id")
         private String id;
-
-        @SerializedName("function")
         private FunctionCall function;
-
-        @SerializedName("type")
         private String type;
-
-        @SerializedName("index")
         private int index;
 
         // Getters and Setters
@@ -444,10 +364,7 @@ public class ChatResponse {
     }
 
     public static class FunctionCall {
-        @SerializedName("name")
         private String name;
-
-        @SerializedName("arguments")
         private String arguments;
 
         // Getters and Setters
