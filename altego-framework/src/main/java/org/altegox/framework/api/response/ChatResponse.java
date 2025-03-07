@@ -220,10 +220,30 @@ public class ChatResponse {
             this.reasoningContent = reasoningContent;
         }
 
+        public List<ChatResponse.ToolCall> getToolCalls() {
+            return toolCalls;
+        }
+
+        public void setToolCalls(List<ChatResponse.ToolCall> toolCalls) {
+            this.toolCalls = toolCalls;
+        }
+
+        public String getRefusal() {
+            return refusal;
+        }
+
+        public void setRefusal(String refusal) {
+            this.refusal = refusal;
+        }
+
         @Override
         public String toString() {
             return "Delta{" +
                     "content='" + content + '\'' +
+                    ", role='" + role + '\'' +
+                    ", refusal='" + refusal + '\'' +
+                    ", reasoningContent='" + reasoningContent + '\'' +
+                    ", toolCalls=" + toolCalls +
                     '}';
         }
     }

@@ -34,8 +34,6 @@ public class Message {
         this.toolCallID = toolCallID;
     }
 
-
-
     public static Message of(String role, String content) {
         return new Message(role, content);
     }
