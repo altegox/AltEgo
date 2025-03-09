@@ -32,7 +32,7 @@ AltEgo 是一个基于 **Java** 开发的 **AI Agent 框架**，能够帮助开�
 
 ## 🚀 安装与使用
 
-### 1️⃣ 先决条件
+### 1️⃣ 准备
 
 - **JDK 21 或更高版本**
 - **Maven 或 Gradle 构建工具**
@@ -163,46 +163,44 @@ void combinationChat() {
 
 #### **示例：工具调用**
 ```java
-// 在类上添加 @Tool 注解可将类中所有方法注册为tool
-@Tool
 public class Tools {
     
+    @Tool(description = "获取当前操作系统名称")
+    public static String getOSName() {
+        return System.getProperty("os.name");
+    }
+
+    @Tool(
+            params = {
+                    @Param(param = "city", required = true)
+            },
+            description = "获取今日天气"
+    )
+    public static String getWeather(String city) {
+        return "多云";
+    }
+
+    @Tool(
+            params = {
+                    @Param(param = "a", required = true),
+                    @Param(param = "b", required = true)
+            },
+            description = "计算两个数的和"
+    )
     public int add(int a, int b) {
         return a + b;
     }
 
-    // 在方法上添加 @Tool 注解将方法注册为tool
-    @Tool
-    public String getWeather(String city) {
-        return city + "天气为 多云";
-    }
-
-    // 排除此方法 不注册为tool
-    @Exclude
-    public void excludePrint() {
-        System.out.println("Exclude");
-    }
-
+    @Tool(
+            params = {
+                    @Param(param = "numbers", required = true)
+            },
+            description = "计算多个数的和"
+    )
     // 启用tool缓存，此tool允许在参数相同的情况下直接走缓存返回运行结果而并非真正运行
     @ToolCache
-    public String cachePrint() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return "useCache";
-    }
-
-    @ToolCache
-    @Exclude(annotation = ToolCache.class)
-    public String excludeCachePrint() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return "noCache";
+    public int add(List<Integer> numbers) {
+        return numbers.stream().mapToInt(Integer::intValue).sum();
     }
 
 }
