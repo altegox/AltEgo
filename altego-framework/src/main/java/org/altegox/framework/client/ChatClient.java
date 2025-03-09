@@ -36,9 +36,7 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
         ChatListener<ChatResponse> listener = new ChatListener<>();
         httpClient.postSync(request, ChatResponse.class, listener);
         ChatResponse chatResponse = listener.onFinish();
-        while ("tool_calls".equals(chatResponse.getChoices().getFirst().getFinishReason())
-                && chatResponse.getChoices().getFirst().getMessage().getToolCalls() != null) {
-
+        while (isToolCallResponse(chatResponse)) {
             List<Message> messageList = new ArrayList<>();
             messageList.add(Message.user(message));
             messageList.add(chatResponse.getChoices().getFirst().getMessage());
@@ -78,8 +76,7 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
             ChatResponse chatResponse = listener.onFinish();
             List<Message> messageList = new ArrayList<>(messages);
             messageList.add(chatResponse.getChoices().getFirst().getMessage());
-            while ("tool_calls".equals(chatResponse.getChoices().getFirst().getFinishReason())
-                    && chatResponse.getChoices().getFirst().getMessage().getToolCalls() != null) {
+            while (isToolCallResponse(chatResponse)) {
                 List<ChatResponse.ToolCall> toolCalls = chatResponse.getChoices().getFirst().getMessage().getToolCalls();
                 toolCalls.forEach(toolCall -> {
                     String toolName = toolCall.getFunction().getName();
@@ -107,17 +104,16 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
     public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
         if (request == null) throw new IllegalArgumentException("request is null");
 
-        ChatListener<ChatResponse> listener0 = new ChatListener<>();
+        ChatListener<ChatResponse> listener = new ChatListener<>();
         // 启用了tool_call
         if (model.getTools() != null) {
             request.setStream(false);
             Caller<String> toolCaller = new ToolCaller<>();
-            httpClient.postSync(request, ChatResponse.class, listener0);
-            ChatResponse chatResponse = listener0.onFinish();
+            httpClient.postSync(request, ChatResponse.class, listener);
+            ChatResponse chatResponse = listener.onFinish();
             List<Message> messageList = request.getMessages();
             messageList.add(chatResponse.getChoices().getFirst().getMessage());
-            while ("tool_calls".equals(chatResponse.getChoices().getFirst().getFinishReason())
-                    && chatResponse.getChoices().getFirst().getMessage().getToolCalls() != null) {
+            while (isToolCallResponse(chatResponse)) {
                 List<ChatResponse.ToolCall> toolCalls = chatResponse.getChoices().getFirst().getMessage().getToolCalls();
                 toolCalls.forEach(toolCall -> {
                     String toolName = toolCall.getFunction().getName();
@@ -128,9 +124,8 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
 
                 request.setMessages(messageList);
 
-                ChatListener<ChatResponse> listener1 = new ChatListener<>();
-                httpClient.postSync(request, ChatResponse.class, listener1);
-                chatResponse = listener1.onFinish();
+                httpClient.postSync(request, ChatResponse.class, listener);
+                chatResponse = listener.onFinish();
             }
             return ModelResponse.of(chatResponse);
         }
@@ -138,9 +133,14 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
         if (model.isStream()) {
             return ModelResponse.of(httpClient.post(request, ChatResponse.class));
         } else {
-            httpClient.postSync(request, ChatResponse.class, listener0);
-            return ModelResponse.of(listener0.onFinish());
+            httpClient.postSync(request, ChatResponse.class, listener);
+            return ModelResponse.of(listener.onFinish());
         }
+    }
+
+    private boolean isToolCallResponse(ChatResponse chatResponse) {
+        return "tool_calls".equals(chatResponse.getChoices().getFirst().getFinishReason())
+                && chatResponse.getChoices().getFirst().getMessage().getToolCalls() != null;
     }
 
 }
