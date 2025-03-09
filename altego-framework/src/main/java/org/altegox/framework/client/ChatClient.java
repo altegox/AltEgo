@@ -87,7 +87,6 @@ public abstract class ChatClient<T extends LangModel> implements ChatService<Cha
                     String toolCallResult = toolCaller.call(toolName, toolArgs);
                     messageList.add(Message.tool(toolCallResult, toolCall.getId()));
                 });
-                System.out.println(chatResponse);
                 request.setMessages(messageList);
 
                 httpClient.postSync(request, ChatResponse.class, listener);
