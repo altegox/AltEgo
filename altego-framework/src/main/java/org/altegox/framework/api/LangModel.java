@@ -6,61 +6,54 @@ import java.util.List;
 import java.util.function.Function;
 
 public class LangModel {
+    private final String baseUrl;
+    private final String apiKey;
+    private final String modelName;
+    private final List<ToolEntity> tools;
+    private final boolean stream;
+    private final LangModel reasonerModel;
+    private final LangModel generateModel;
 
-    private String baseUrl;
-    private String apiKey;
-    private String modelName;
-    private List<ToolEntity> tools;
-    private boolean stream;
-    private LangModel reasonerModel;
-    private LangModel generateModel;
+    public LangModel() {
+        this.baseUrl = null;
+        this.apiKey = null;
+        this.modelName = null;
+        this.tools = null;
+        this.stream = false;
+        this.reasonerModel = null;
+        this.generateModel = null;
+    }
 
-    private LangModel(Builder builder) {
+    protected LangModel(Builder<?> builder) {
         this.baseUrl = builder.baseUrl;
         this.apiKey = builder.apiKey;
         this.modelName = builder.modelName;
         this.tools = builder.tools;
         this.stream = builder.stream;
-        this.reasonerModel = builder.reasonerModel;
-        this.generateModel = builder.generateModel;
+
+        // 继承主模型的未设置字段
+        this.reasonerModel = inheritUnsetFields(builder.reasonerModel, this);
+        this.generateModel = inheritUnsetFields(builder.generateModel, this);
     }
 
-    public LangModel(String baseUrl, String apiKey, String modelName, boolean stream) {
-        this.baseUrl = baseUrl;
-        this.apiKey = apiKey;
-        this.modelName = modelName;
-        this.stream = stream;
+    private LangModel inheritUnsetFields(LangModel child, LangModel parent) {
+        if (child == null) return parent; // 若子模型未定义，直接返回主模型
+        return new Builder<>()
+                .baseUrl(child.baseUrl != null ? child.baseUrl : parent.baseUrl)
+                .apiKey(child.apiKey != null ? child.apiKey : parent.apiKey)
+                .modelName(child.modelName != null ? child.modelName : parent.modelName)
+                .tools(child.tools != null ? child.tools : parent.tools)
+                .stream(child.stream)  // 流式处理由子模型自己决定
+                .build();
     }
-
-    public LangModel(String baseUrl, String apiKey, String modelName, List<ToolEntity> tools, boolean stream) {
-        this.baseUrl = baseUrl;
-        this.apiKey = apiKey;
-        this.modelName = modelName;
-        this.tools = tools;
-        this.stream = stream;
-    }
-
-    public LangModel() {}
 
     public String getBaseUrl() { return baseUrl; }
-    public void setBaseUrl(String baseUrl) { this.baseUrl = baseUrl; }
-
     public String getApiKey() { return apiKey; }
-    public void setApiKey(String apiKey) { this.apiKey = apiKey; }
-
     public String getModelName() { return modelName; }
-    public void setModelName(String modelName) { this.modelName = modelName; }
-
     public List<ToolEntity> getTools() { return tools; }
-    public void setTools(List<ToolEntity> tools) { this.tools = tools; }
-
     public boolean isStream() { return stream; }
-    public void setStream(boolean stream) { this.stream = stream; }
-
     public LangModel getReasonerModel() { return reasonerModel; }
-    public void setReasonerModel(LangModel reasonerModel) { this.reasonerModel = reasonerModel; }
     public LangModel getGenerateModel() { return generateModel; }
-    public void setGenerateModel(LangModel generateModel) { this.generateModel = generateModel; }
 
     @Override
     public String toString() {
@@ -75,7 +68,11 @@ public class LangModel {
                 '}';
     }
 
-    public static class Builder {
+    public static Builder<?> builder() {
+        return new Builder<>();
+    }
+
+    public static class Builder<T extends Builder<T>> {
         private String baseUrl;
         private String apiKey;
         private String modelName;
@@ -84,57 +81,48 @@ public class LangModel {
         private LangModel reasonerModel;
         private LangModel generateModel;
 
-        public Builder baseUrl(String baseUrl) {
+        public T baseUrl(String baseUrl) {
             this.baseUrl = baseUrl;
-            return this;
+            return self();
         }
 
-        public Builder apiKey(String apiKey) {
+        public T apiKey(String apiKey) {
             this.apiKey = apiKey;
-            return this;
+            return self();
         }
 
-        public Builder modelName(String modelName) {
+        public T modelName(String modelName) {
             this.modelName = modelName;
-            return this;
+            return self();
         }
 
-        public Builder tools(List<ToolEntity> tools) {
+        public T tools(List<ToolEntity> tools) {
             this.tools = tools;
-            return this;
+            return self();
         }
 
-        public Builder stream(boolean stream) {
+        public T stream(boolean stream) {
             this.stream = stream;
-            return this;
+            return self();
         }
 
-        public Builder reasoner(LangModel reasonerModel) {
-            this.reasonerModel = reasonerModel;
-            return this;
+        public T reasoner(Function<Builder<?>, Builder<?>> reasonerConfig) {
+            this.reasonerModel = reasonerConfig.apply(new Builder<>()).build();
+            return self();
         }
 
-        public Builder reasoner(Function<LangModel, LangModel> reasonerModel) {
-            this.reasonerModel = reasonerModel.apply(new LangModel());
-            return this;
+        public T generate(Function<Builder<?>, Builder<?>> generateConfig) {
+            this.generateModel = generateConfig.apply(new Builder<>()).build();
+            return self();
         }
 
-        public Builder generate(LangModel generateModel) {
-            this.generateModel = generateModel;
-            return this;
-        }
-
-        public Builder generate(Function<LangModel, LangModel> generateModel) {
-            this.generateModel = generateModel.apply(new LangModel());
-            return this;
+        @SuppressWarnings("unchecked")
+        protected T self() {
+            return (T) this;
         }
 
         public LangModel build() {
             return new LangModel(this);
         }
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 }
