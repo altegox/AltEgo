@@ -31,7 +31,15 @@ public class ToolManager {
     }
 
     public void registerTool(ToolEntity tool) {
+        /*
+          如你所见，这里其实并不合理，因为toolname来源于method name，所以一个toolname可能对应多个Tool
+          但是为了简单起见，这里只用一个工具名对应一个工具实体，即不允许出现重名的method
+         */
         toolContainer.put(tool.toolName(), tool);
+        /*
+          这里的signature本来是用于唯一标识一个工具，但这会使得getTool变得复杂，现已改用toolname
+          这里仅为兼容处理，后续将会去除
+         */
         toolContainer.put(tool.signature(), tool);
     }
 
