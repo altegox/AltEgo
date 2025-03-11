@@ -57,10 +57,15 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
      * 构建默认请求对象
      */
     private DefaultRequest buildDefaultRequest(List<Message> messages) {
+        List<Message> messageList = new ArrayList<>(messages);
+        if (!"system".equals(messageList.getFirst().getRole())) {
+            messageList.addFirst(Message.system(model.getSystemMessage()));
+        }
+        messageList.addFirst(Message.system(model.getSystemMessage()));
         return DefaultRequest.builder()
                 .model(model.getModelName())
                 .stream(model.isStream())
-                .messages(messages)
+                .messages(messageList)
                 .tools(model.getTools())
                 .build();
     }
@@ -86,7 +91,7 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
     /**
      * 处理工具调用逻辑
      *
-     * @param request 请求对象
+     * @param request    请求对象
      * @param toolCaller 工具调用器
      * @return 最终的聊天响应
      */

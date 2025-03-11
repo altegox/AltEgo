@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.function.Function;
 
 public class LangModel {
+
+    private static final String DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
+
     private final String baseUrl;
     private final String apiKey;
     private final String modelName;
+    private final String systemMessage;
     private final List<ToolEntity> tools;
     private final boolean stream;
     private final LangModel reasonerModel;
@@ -18,6 +22,7 @@ public class LangModel {
         this.baseUrl = null;
         this.apiKey = null;
         this.modelName = null;
+        this.systemMessage = DEFAULT_SYSTEM_MESSAGE;
         this.tools = null;
         this.stream = false;
         this.reasonerModel = null;
@@ -28,6 +33,7 @@ public class LangModel {
         this.baseUrl = builder.baseUrl;
         this.apiKey = builder.apiKey;
         this.modelName = builder.modelName;
+        this.systemMessage = builder.systemMessage;
         this.tools = builder.tools;
         this.stream = builder.stream;
 
@@ -37,23 +43,49 @@ public class LangModel {
     }
 
     private LangModel inheritUnsetFields(LangModel child, LangModel parent) {
-        if (child == null) return parent; // 若子模型未定义，直接返回主模型
+        if (child == null) return parent;
         return new Builder<>()
                 .baseUrl(child.baseUrl != null ? child.baseUrl : parent.baseUrl)
                 .apiKey(child.apiKey != null ? child.apiKey : parent.apiKey)
                 .modelName(child.modelName != null ? child.modelName : parent.modelName)
+                .systemMessage(child.systemMessage != null ? child.systemMessage :
+                        (parent.systemMessage != null ? parent.systemMessage : DEFAULT_SYSTEM_MESSAGE))
                 .tools(child.tools != null ? child.tools : parent.tools)
-                .stream(child.stream)  // 流式处理由子模型自己决定
+                .stream(child.stream)
                 .build();
     }
 
-    public String getBaseUrl() { return baseUrl; }
-    public String getApiKey() { return apiKey; }
-    public String getModelName() { return modelName; }
-    public List<ToolEntity> getTools() { return tools; }
-    public boolean isStream() { return stream; }
-    public LangModel getReasonerModel() { return reasonerModel; }
-    public LangModel getGenerateModel() { return generateModel; }
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public String getSystemMessage() {
+        return systemMessage;
+    }
+
+    public List<ToolEntity> getTools() {
+        return tools;
+    }
+
+    public boolean isStream() {
+        return stream;
+    }
+
+    public LangModel getReasonerModel() {
+        return reasonerModel;
+    }
+
+    public LangModel getGenerateModel() {
+        return generateModel;
+    }
 
     @Override
     public String toString() {
@@ -61,6 +93,7 @@ public class LangModel {
                 "baseUrl='" + baseUrl + '\'' +
                 ", apiKey='" + apiKey + '\'' +
                 ", modelName='" + modelName + '\'' +
+                ", systemMessage='" + systemMessage + '\'' +
                 ", tools=" + tools +
                 ", stream=" + stream +
                 ", reasonerModel=" + (reasonerModel != null ? reasonerModel.getModelName() : "null") +
@@ -76,6 +109,7 @@ public class LangModel {
         private String baseUrl;
         private String apiKey;
         private String modelName;
+        private String systemMessage;
         private List<ToolEntity> tools;
         private boolean stream;
         private LangModel reasonerModel;
@@ -93,6 +127,11 @@ public class LangModel {
 
         public T modelName(String modelName) {
             this.modelName = modelName;
+            return self();
+        }
+
+        public T systemMessage(String systemMessage) {
+            this.systemMessage = systemMessage == null ? DEFAULT_SYSTEM_MESSAGE : systemMessage;
             return self();
         }
 

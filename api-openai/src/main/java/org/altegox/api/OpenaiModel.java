@@ -2,9 +2,6 @@ package org.altegox.api;
 
 import org.altegox.framework.api.LangModel;
 import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.toolcall.ToolEntity;
-
-import java.util.List;
 
 public class OpenaiModel extends LangModel {
 

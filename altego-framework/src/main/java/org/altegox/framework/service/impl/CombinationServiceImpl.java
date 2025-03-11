@@ -12,6 +12,7 @@ import org.altegox.framework.service.listener.AbstractListener;
 import org.altegox.framework.service.listener.ChatListener;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +40,10 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
         DefaultRequest reasonerRequest = DefaultRequest.builder()
                 .model(model.getReasonerModel().getModelName())
                 .stream(true) // 必须设置为 true 才返回推理内容
-                .messages(List.of(Message.user(message)))
+                .messages(List.of(
+                        Message.system(model.getReasonerModel().getSystemMessage()),
+                        Message.user(message)
+                ))
                 .build();
 
         String reasonerContent = Objects.requireNonNull(reasonerClient.post(reasonerRequest, ChatResponse.class)
@@ -54,13 +58,16 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                         .block())
                 .toString();
 
-        reasonerContent = "<think>" + reasonerContent + "</think>";
+        reasonerContent = "<think>\n" + reasonerContent + "</think>\n";
         Log.debug("Reasoner response: {}", reasonerContent);
 
         // 构造生成模型请求
         DefaultRequest generateRequest = DefaultRequest.builder()
                 .model(model.getGenerateModel().getModelName())
-                .messages(List.of(Message.user(reasonerContent + "\n" + message)))
+                .messages(List.of(
+                        Message.system(model.getGenerateModel().getSystemMessage()),
+                        Message.user(reasonerContent + "\n" + message)
+                ))
                 .build();
 
         generateClient.postSync(generateRequest, ChatResponse.class, listener);
@@ -76,15 +83,19 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
     @Override
     public ModelResponse<ChatResponse> chat(List<Message> messages) {
         boolean isStream = model.isStream();
-
+        List<Message> messageList = new ArrayList<>(messages);
+        // 如果第一个消息不是 system，则添加 system 消息
+        if (!"system".equals(messageList.getFirst().getRole())) {
+            messageList.addFirst(Message.system(model.getReasonerModel().getSystemMessage()));
+        }
         // Reasoner 请求，永远以流式拿到推理内容
         DefaultRequest reasonerRequest = DefaultRequest.builder()
                 .model(model.getReasonerModel().getModelName())
-                .stream(true) // 这里的推理部分仍然是流式的
-                .messages(messages)
+                .stream(true)
+                .messages(messageList)
                 .build();
 
-        StringBuilder reasoningContentBuffer = new StringBuilder("<think>");
+        StringBuilder reasoningContentBuffer = new StringBuilder("<think>\n");
 
         if (isStream) {
             Flux<ChatResponse> reasonerStream = reasonerClient.post(reasonerRequest, ChatResponse.class)
@@ -95,7 +106,7 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                                 .map(choices -> choices.getFirst().getDelta())
                                 .map(ChatResponse.Delta::getReasoningContent)
                                 .orElse(null);
-
+                        System.out.println(rc);
                         if (rc == null && (response.getChoices().getFirst().getDelta().getContent() != null
                                 || response.getChoices().getFirst().getMessage().getContent() != null)) {
                             reasoningContentBuffer.append("</think>\n");
@@ -107,14 +118,22 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                     });
 
             Flux<ChatResponse> generatorStream = Flux.defer(() -> {
-                String originContent = messages.getLast().getContent();
+                String originContent = messageList.getLast().getContent();
                 String newContent = reasoningContentBuffer + originContent;
-                messages.getLast().setContent(newContent);
+                messageList.getLast().setContent(newContent);
+
+                // 如果第一个消息不是 system，则添加 system 消息
+                if (!"system".equals(messageList.getFirst().getRole())) {
+                    messageList.addFirst(Message.system(model.getReasonerModel().getSystemMessage()));
+                } else {
+                    // 如果第一个消息是 system，则为reasonerModel的 system，修改为generatorModel content
+                    messageList.getFirst().setContent(model.getGenerateModel().getSystemMessage());
+                }
 
                 DefaultRequest generateRequest = DefaultRequest.builder()
                         .model(model.getGenerateModel().getModelName())
                         .stream(true)
-                        .messages(messages)
+                        .messages(messageList)
                         .build();
 
                 return generateClient.post(generateRequest, ChatResponse.class);
@@ -131,15 +150,22 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                     .map(choices -> choices.getFirst().getMessage().getContent())
                     .orElse("");
 
-            reasoningContent = "<think>" + reasoningContent + "</think>";
+            reasoningContent = "<think>\n" + reasoningContent + "</think>\n";
 
-            String originContent = messages.getLast().getContent();
+            String originContent = messageList.getLast().getContent();
             String newContent = reasoningContent + "\n" + originContent;
-            messages.getLast().setContent(newContent);
+            messageList.getLast().setContent(newContent);
+
+            // todo: 待优化
+            if (!"system".equals(messageList.getFirst().getRole())) {
+                messageList.addFirst(Message.system(model.getReasonerModel().getSystemMessage()));
+            } else {
+                messageList.getFirst().setContent(model.getGenerateModel().getSystemMessage());
+            }
 
             DefaultRequest generateRequest = DefaultRequest.builder()
                     .model(model.getGenerateModel().getModelName())
-                    .messages(messages)
+                    .messages(messageList)
                     .build();
 
             generateClient.postSync(generateRequest, ChatResponse.class, listener);
@@ -152,9 +178,13 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
     @Override
     public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
         boolean isStream = model.isStream();
-
+        List<Message> messageList = new ArrayList<>(request.getMessages());
+        request.setMessages(messageList);
+        messageList = request.getMessages();
+        if (!"system".equals(messageList.getFirst().getRole())) {
+            messageList.addFirst(Message.system(model.getSystemMessage()));
+        }
         StringBuilder reasoningContentBuffer = new StringBuilder("<think>");
-
         if (isStream) {
             Flux<ChatResponse> reasonerStream = reasonerClient.post(request, ChatResponse.class)
                     .takeWhile(response -> {
@@ -176,10 +206,16 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                     });
 
             Flux<ChatResponse> generatorStream = Flux.defer(() -> {
-                List<Message> messages = request.getMessages();
-                String originContent = messages.getLast().getContent();
+                List<Message> generatorMessageList = request.getMessages();
+                String originContent = generatorMessageList.getLast().getContent();
                 String newContent = reasoningContentBuffer + originContent;
-                messages.getLast().setContent(newContent);
+                generatorMessageList.getLast().setContent(newContent);
+
+                if (!"system".equals(generatorMessageList.getFirst().getRole())) {
+                    generatorMessageList.addFirst(Message.system(model.getReasonerModel().getSystemMessage()));
+                } else {
+                    generatorMessageList.getFirst().setContent(model.getGenerateModel().getSystemMessage());
+                }
 
                 return generateClient.post(request, ChatResponse.class);
             });
@@ -195,12 +231,18 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
                     .map(choices -> choices.getFirst().getMessage().getContent())
                     .orElse("");
 
-            reasoningContent = "<think>" + reasoningContent + "</think>";
+            reasoningContent = "<think>\n" + reasoningContent + "</think>\n";
 
             List<Message> messages = request.getMessages();
             String originContent = messages.getLast().getContent();
-            String newContent = reasoningContent + "\n" + originContent;
+            String newContent = reasoningContent + originContent;
             messages.getLast().setContent(newContent);
+
+            if (!"system".equals(messages.getFirst().getRole())) {
+                messages.addFirst(Message.system(model.getReasonerModel().getSystemMessage()));
+            } else {
+                messages.getFirst().setContent(model.getGenerateModel().getSystemMessage());
+            }
 
             generateClient.postSync(request, ChatResponse.class, listener);
             ChatResponse finalResponse = listener.onFinish();
