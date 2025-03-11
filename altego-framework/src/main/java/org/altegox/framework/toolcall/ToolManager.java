@@ -61,10 +61,7 @@ public class ToolManager {
     }
 
     public ToolEntity getToolByName(String toolname) {
-        return toolContainer.values().stream()
-                .filter(tool -> tool.toolName().equals(toolname))
-                .findFirst()
-                .orElse(null);
+        return toolContainer.get(toolname);
     }
 
 }

@@ -36,7 +36,7 @@ public class ToolCaller<T> implements Caller<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T call(String toolName, Object... args) {
-        ToolEntity tool = toolManager.getTool(toolName);
+        ToolEntity tool = toolManager.getToolByName(toolName);
         if (tool == null) {
             throw new ToolNotFindException("Tool not found: " + toolName + ", args: " + Arrays.toString(args));
         }
@@ -63,7 +63,7 @@ public class ToolCaller<T> implements Caller<T> {
     public T call(String toolName, String args) {
         JsonObject jsonObject = Json.fromJson(args, JsonObject.class);
         List<String> keys = new ArrayList<>();
-        ToolEntity toolEntity = toolManager.getTool(toolName);
+        ToolEntity toolEntity = toolManager.getToolByName(toolName);
         toolEntity.parameters().properties().forEach((key, property) -> {
             if (jsonObject.has(key)) {
                 keys.add(String.valueOf(jsonObject.get(key)));
