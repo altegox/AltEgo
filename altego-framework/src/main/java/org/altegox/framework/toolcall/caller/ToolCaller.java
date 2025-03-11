@@ -1,8 +1,11 @@
 package org.altegox.framework.toolcall.caller;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.altegox.common.enums.CacheEnum;
 import org.altegox.common.exception.AltegoException;
 import org.altegox.common.exception.ToolNotFindException;
+import org.altegox.common.utils.Json;
 import org.altegox.framework.config.AltegoConfig;
 import org.altegox.framework.toolcall.InstanceUtils;
 import org.altegox.framework.toolcall.ToolEntity;
@@ -33,7 +36,7 @@ public class ToolCaller<T> implements Caller<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T call(String toolName, Object... args) {
-        ToolEntity tool = toolManager.getTool(toolName, args);
+        ToolEntity tool = toolManager.getTool(toolName);
         if (tool == null) {
             throw new ToolNotFindException("Tool not found: " + toolName + ", args: " + Arrays.toString(args));
         }
@@ -55,6 +58,20 @@ public class ToolCaller<T> implements Caller<T> {
         }
         return null;
     }
+
+    @Override
+    public T call(String toolName, String args) {
+        JsonObject jsonObject = Json.fromJson(args, JsonObject.class);
+        List<String> keys = new ArrayList<>();
+        ToolEntity toolEntity = toolManager.getTool(toolName);
+        toolEntity.parameters().properties().forEach((key, property) -> {
+            if (jsonObject.has(key)) {
+                keys.add(String.valueOf(jsonObject.get(key)));
+            }
+        });
+        return call(toolName, keys.toArray());
+    }
+
 
     private Object getFromCache(ToolEntity tool, Object... args) {
         if (AltegoConfig.isEnableCallCache() && toolCacheManager.isCachedMethod(tool.signature())) {

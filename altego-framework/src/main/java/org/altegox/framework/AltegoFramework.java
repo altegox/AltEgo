@@ -1,7 +1,10 @@
 package org.altegox.framework;
 
+import org.altegox.common.log.Log;
+import org.altegox.common.utils.Json;
 import org.altegox.framework.annotation.AnnotationProcessor;
 import org.altegox.framework.annotation.Component;
+import org.altegox.framework.annotation.Param;
 import org.altegox.framework.annotation.Tool;
 import org.altegox.framework.config.AltegoConfig;
 import org.altegox.framework.toolcall.ComponentContainer;
@@ -10,7 +13,10 @@ import org.altegox.framework.toolcall.ToolCacheManager;
 import org.altegox.framework.toolcall.ToolManager;
 import org.altegox.framework.toolcall.ToolEntity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AltegoFramework {
 
@@ -40,8 +46,28 @@ public class AltegoFramework {
     private static void registerTools(String... packageName) {
         AnnotationProcessor toolProcessor = new AnnotationProcessor(Tool.class, packageName);
         toolProcessor.getAnnotatedMethods().forEach(method -> {
-            ToolEntity tool = ToolEntity.of(method, method.getName(), null);
-            ToolManager.getInstance().registerTool(tool);
+            Tool toolAnnotation = method.getAnnotation(Tool.class);
+            String toolName = method.getName();
+            String description = toolAnnotation != null ? toolAnnotation.description() : "";
+            ToolEntity.ToolParameters parameters = null;
+            if (toolAnnotation != null) {
+                Param[] params = toolAnnotation.params();
+                if (params.length > 0) {
+                    Map<String, ToolEntity.Property> properties = new HashMap<>();
+                    List<String> requiredList = new ArrayList<>();
+                    for (Param param : params) {
+                        // 这里假设所有参数类型都为 string
+                        properties.put(param.param(), ToolEntity.Property.of("string", param.description()));
+                        if (param.required()) {
+                            requiredList.add(param.param());
+                        }
+                    }
+                    parameters = new ToolEntity.ToolParameters(properties, requiredList.toArray(new String[0]));
+                }
+            }
+            ToolEntity toolEntity = ToolEntity.of(method, toolName, description, parameters);
+            Log.debug("Register tool: {}", Json.toJson(toolEntity));
+            ToolManager.getInstance().registerTool(toolEntity);
         });
     }
 

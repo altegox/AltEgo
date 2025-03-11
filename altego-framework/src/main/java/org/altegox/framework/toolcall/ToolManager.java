@@ -31,6 +31,7 @@ public class ToolManager {
     }
 
     public void registerTool(ToolEntity tool) {
+        toolContainer.put(tool.toolName(), tool);
         toolContainer.put(tool.signature(), tool);
     }
 
@@ -43,6 +44,19 @@ public class ToolManager {
                 .map(arg -> arg != null ? arg.getClass() : Object.class)
                 .toArray(Class<?>[]::new);
         return getTool(ToolSigner.sign(toolname, argTypes));
+    }
+
+    public List<ToolEntity> getToolsByName(String toolname) {
+        return toolContainer.values().stream()
+                .filter(tool -> tool.toolName().equals(toolname))
+                .toList();
+    }
+
+    public ToolEntity getToolByName(String toolname) {
+        return toolContainer.values().stream()
+                .filter(tool -> tool.toolName().equals(toolname))
+                .findFirst()
+                .orElse(null);
     }
 
 }

@@ -7,5 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface Param {
     String param();
 
+    String description() default "";
+
     boolean required() default true;
 }

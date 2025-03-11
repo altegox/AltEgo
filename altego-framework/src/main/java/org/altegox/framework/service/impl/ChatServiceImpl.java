@@ -1,6 +1,5 @@
 package org.altegox.framework.service.impl;
 
-import org.altegox.common.utils.Json;
 import org.altegox.framework.service.listener.ChatListener;
 import org.altegox.framework.api.HttpClient;
 import org.altegox.framework.api.LangModel;
@@ -61,7 +60,6 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
         if (!"system".equals(messageList.getFirst().getRole())) {
             messageList.addFirst(Message.system(model.getSystemMessage()));
         }
-        messageList.addFirst(Message.system(model.getSystemMessage()));
         return DefaultRequest.builder()
                 .model(model.getModelName())
                 .stream(model.isStream())
@@ -112,7 +110,7 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
             List<ChatResponse.ToolCall> toolCalls = chatResponse.getChoices().getFirst().getMessage().getToolCalls();
             toolCalls.forEach(toolCall -> {
                 String toolName = toolCall.getFunction().getName();
-                String toolArgs = Json.toJson(toolCall.getFunction().getArguments());
+                String toolArgs = toolCall.getFunction().getArguments();
                 String toolCallResult = toolCaller.call(toolName, toolArgs);
                 messageList.add(Message.tool(toolCallResult, toolCall.getId()));
             });
