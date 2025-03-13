@@ -2,10 +2,7 @@ package org.altegox.framework;
 
 import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
-import org.altegox.framework.annotation.AnnotationProcessor;
-import org.altegox.framework.annotation.Component;
-import org.altegox.framework.annotation.Param;
-import org.altegox.framework.annotation.Tool;
+import org.altegox.framework.annotation.*;
 import org.altegox.framework.config.AltegoConfig;
 import org.altegox.framework.toolcall.ComponentContainer;
 import org.altegox.framework.toolcall.InstanceUtils;
@@ -44,12 +41,20 @@ public class AltegoFramework {
      * 扫描 @Tool 注解并注册工具方法
      */
     private static void registerTools(String... packageName) {
-        AnnotationProcessor toolProcessor = new AnnotationProcessor(Tool.class, packageName);
+        AnnotationProcessor toolProcessor = new AnnotationProcessor(List.of(Tool.class, Agent.class), packageName);
         toolProcessor.getAnnotatedMethods().forEach(method -> {
             Tool toolAnnotation = method.getAnnotation(Tool.class);
             String toolName = method.getName();
-            String description = toolAnnotation.description();
-            String group = toolAnnotation.group();
+            String toolDescription = toolAnnotation.description();
+
+            Class<?> declaringClass = method.getDeclaringClass();
+            Agent agentAnnotation = declaringClass.getAnnotation(Agent.class);
+            String group;
+            if (agentAnnotation != null) {
+                group = "default".equals(agentAnnotation.group()) ? toolAnnotation.group() : agentAnnotation.group();
+            } else {
+                group = toolAnnotation.group();
+            }
             ToolEntity.ToolParameters parameters = null;
             Param[] params = toolAnnotation.params();
             if (params.length > 0) {
@@ -64,7 +69,7 @@ public class AltegoFramework {
                 }
                 parameters = new ToolEntity.ToolParameters(properties, requiredList.toArray(new String[0]));
             }
-            ToolEntity toolEntity = ToolEntity.of(method, group, toolName, description, parameters);
+            ToolEntity toolEntity = ToolEntity.of(method, group, toolName, toolDescription, parameters);
             Log.debug("Register tool: {}", Json.toJson(toolEntity));
             ToolManager.getInstance().registerTool(toolEntity);
         });

@@ -12,12 +12,17 @@ import java.util.function.Predicate;
 
 public class AnnotationProcessor {
 
-    private final Class<? extends Annotation> annotation;
+    private final List<Class<? extends Annotation>> annotations;
 
     private final String[] packageName;
 
+    public AnnotationProcessor(List<Class<? extends Annotation>> annotation, String... packageName) {
+        this.annotations = annotation;
+        this.packageName = packageName;
+    }
+
     public AnnotationProcessor(Class<? extends Annotation> annotation, String... packageName) {
-        this.annotation = annotation;
+        this.annotations = List.of(annotation);
         this.packageName = packageName;
     }
 
@@ -31,8 +36,10 @@ public class AnnotationProcessor {
 
             scanResult.getAllClasses().forEach(classInfo -> {
                 Class<?> clazz = classInfo.loadClass();
-                if (clazz.isAnnotationPresent(annotation)) {
-                    classes.add(clazz);
+                for (Class<? extends Annotation> aClass : annotations) {
+                    if (clazz.isAnnotationPresent(aClass)) {
+                        classes.add(clazz);
+                    }
                 }
             });
         } catch (Exception e) {
@@ -81,7 +88,10 @@ public class AnnotationProcessor {
      * 判断方法是否包含指定注解
      */
     private boolean isIncludedAnnotation(Class<?> clazz, Method method) {
-        return clazz.isAnnotationPresent(annotation) || method.isAnnotationPresent(annotation);
+//        return clazz.isAnnotationPresent(annotation) || method.isAnnotationPresent(annotation);
+        return annotations.stream()
+                .anyMatch(aClass -> clazz.isAnnotationPresent(aClass)
+                        || method.isAnnotationPresent(aClass));
     }
 
     /**
@@ -96,8 +106,12 @@ public class AnnotationProcessor {
         }
 
         /* 若存在参数，则判断是否包含指定注解 */
-        return Arrays.stream(exclude.annotation())
-                .anyMatch(aClass -> aClass == annotation);
+        for (Class<? extends Annotation> aClass : exclude.annotation()) {
+            if (annotations.contains(aClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
