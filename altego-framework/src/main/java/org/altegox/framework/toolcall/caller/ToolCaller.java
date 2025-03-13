@@ -61,6 +61,9 @@ public class ToolCaller<T> implements Caller<T> {
 
     @Override
     public T call(String toolName, String args) {
+        if (args == null || args.isBlank() || args.equals("{}")) {
+            return call(toolName);
+        }
         JsonObject jsonObject = Json.fromJson(args, JsonObject.class);
         List<String> keys = new ArrayList<>();
         ToolEntity toolEntity = toolManager.getToolByName(toolName);
