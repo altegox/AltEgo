@@ -135,20 +135,18 @@ void streamChat() {
 @Test
 void combinationChat() {
     LangModel model = OpenaiModel.builder()
-            .stream(true)
-            .reasoner(reasoner -> {
-                reasoner.setBaseUrl(System.getenv("DEEPSEEK_BASE_URL"));
-                reasoner.setApiKey(System.getenv("DEEPSEEK_API_KEY"));
-                reasoner.setModelName("deepseek-reasoner");
-                return reasoner;
-            })
-            .generate(generate -> {
-                generate.setBaseUrl(System.getenv("OPENAI_BASE_URL"));
-                generate.setApiKey(System.getenv("OPENAI_API_KEY"));
-                generate.setModelName("gpt-4o");
-                return generate;
-            })
-            .build();
+                .stream(true)
+                .reasoner(reasoner -> reasoner
+                        .baseUrl(System.getenv("DEEPSEEK_BASE_URL"))
+                        .apiKey(System.getenv("DEEPSEEK_API_KEY"))
+                        .modelName("deepseek-reasoner")
+                )
+                .generate(generate -> generate
+                        .baseUrl(System.getenv("OPENAI_BASE_URL"))
+                        .apiKey(System.getenv("OPENAI_API_KEY"))
+                        .modelName("gpt-4o")
+                )
+                .build();
 
     CombinationClient client = CombinationClient.create(model);
     ModelResponse<ChatResponse> response = client.chat(List.of(Message.user("0.9和0.11哪个更大？")));
@@ -163,8 +161,22 @@ void combinationChat() {
 
 #### **示例：工具调用**
 ```java
+  @Test
+  void toolCallChat() {
+        OpenaiModel model = OpenaiModel.builder()
+                .baseUrl(System.getenv("OPENAI_BASE_URL"))
+                .apiKey(System.getenv("OPENAI_API_KEY"))
+                .modelName("gpt-4o")
+                .tools(ToolManager.getInstance().getToolsByName("getWeather"))
+                .stream(true)
+                .build();
+        OpenaiClient client = OpenaiClient.create(model);
+        ModelResponse<ChatResponse> response = client.chat(List.of(Message.user("你好, 今天泰安天气怎么样？")));
+        System.out.println(response.response());
+  }
+
 public class Tools {
-    
+
     @Tool(description = "获取当前操作系统名称")
     public static String getOSName() {
         return System.getProperty("os.name");
@@ -172,7 +184,7 @@ public class Tools {
 
     @Tool(
             params = {
-                    @Param(param = "city", required = true)
+                    @Param(param = "city", description = "城市名称", required = true)
             },
             description = "获取今日天气"
     )
@@ -182,8 +194,8 @@ public class Tools {
 
     @Tool(
             params = {
-                    @Param(param = "a", required = true),
-                    @Param(param = "b", required = true)
+                    @Param(param = "a", description = "第一个数", required = true),
+                    @Param(param = "b", description = "第二个数", required = true)
             },
             description = "计算两个数的和"
     )
@@ -193,7 +205,7 @@ public class Tools {
 
     @Tool(
             params = {
-                    @Param(param = "numbers", required = true)
+                    @Param(param = "numbers", description = "数字列表", required = true)
             },
             description = "计算多个数的和"
     )
