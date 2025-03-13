@@ -12,7 +12,7 @@ public interface ChatService<T> {
 
     ModelResponse<T> chat(List<Message> messages);
 
-    <R extends DefaultRequest> ModelResponse<T> chat(R request);
+    ModelResponse<T> chat(DefaultRequest request);
 
 //    String completions(String message);
 //

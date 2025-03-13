@@ -37,7 +37,7 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
     }
 
     @Override
-    public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
+    public ModelResponse<ChatResponse> chat(DefaultRequest request) {
         if (request == null) throw new IllegalArgumentException("request is null");
 
         if (request.getModel() == null) {

@@ -26,7 +26,7 @@ public abstract class ChatClient<T extends LangModel> {
         return chatService.chat(messages);
     }
 
-    public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
+    public ModelResponse<ChatResponse> chat(DefaultRequest request) {
         return chatService.chat(request);
     }
 }

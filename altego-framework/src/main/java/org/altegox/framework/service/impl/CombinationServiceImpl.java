@@ -176,7 +176,7 @@ public class CombinationServiceImpl implements ChatService<ChatResponse> {
     }
 
     @Override
-    public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
+    public ModelResponse<ChatResponse> chat(DefaultRequest request) {
         boolean isStream = model.isStream();
         List<Message> messageList = new ArrayList<>(request.getMessages());
         request.setMessages(messageList);

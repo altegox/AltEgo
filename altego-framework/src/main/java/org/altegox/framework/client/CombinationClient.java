@@ -29,7 +29,7 @@ public class CombinationClient {
         return service.chat(messages);
     }
 
-    public <R extends DefaultRequest> ModelResponse<ChatResponse> chat(R request) {
+    public ModelResponse<ChatResponse> chat(DefaultRequest request) {
         return service.chat(request);
     }
 }
