@@ -9,27 +9,13 @@ public class ToolEntity {
     private final Function function;
     private transient Method method;
     private transient String signature;
+    private transient String group;
 
-    public static class Function {
-        private final String name;
-        private final String description;
-        private final ToolParameters parameters;
-
-        public Function(String name, String description, ToolParameters parameters) {
-            this.name = name;
-            this.description = description;
-            this.parameters = parameters;
-        }
-
-        public static Function of(String name, String description, ToolParameters parameters) {
-            return new Function(name, description, parameters);
-        }
-    }
-
-    public ToolEntity(String type, Method method, String name, String description, String signature,
+    public ToolEntity(String type, Method method, String group, String name, String description, String signature,
                       ToolParameters parameters) {
         this.type = (type == null ? "function" : type);
         this.method = method;
+        this.group = group;
         this.function = new Function(name, description, parameters);
         this.signature = signature;
     }
@@ -46,7 +32,7 @@ public class ToolEntity {
 
     public static ToolEntity of(String type, Method method, String toolName, String description,
                                 ToolParameters parameters) {
-        return new ToolEntity(type, method, toolName, description, ToolSigner.sign(method), parameters);
+        return new ToolEntity(type, method, null, toolName, description, ToolSigner.sign(method), parameters);
     }
 
     public static ToolEntity of(String type, Function function) {
@@ -57,12 +43,12 @@ public class ToolEntity {
         return new ToolEntity(function);
     }
 
-    public static ToolEntity of(Method method, String toolName, String description, ToolParameters parameters) {
-        return new ToolEntity(null, method, toolName, description, ToolSigner.sign(method), parameters);
+    public static ToolEntity of(Method method, String group, String toolName, String description, ToolParameters parameters) {
+        return new ToolEntity(null, method, group, toolName, description, ToolSigner.sign(method), parameters);
     }
 
     public static ToolEntity of(Method method, String name, String description) {
-        return new ToolEntity(null, method, name, description, ToolSigner.sign(method), null);
+        return new ToolEntity(null, method, null, name, description, ToolSigner.sign(method), null);
     }
 
     public String type() {
@@ -81,12 +67,32 @@ public class ToolEntity {
         return function.description;
     }
 
+    public String group() {
+        return group;
+    }
+
     public String signature() {
         return signature;
     }
 
     public ToolParameters parameters() {
         return function.parameters;
+    }
+
+    public static class Function {
+        private final String name;
+        private final String description;
+        private final ToolParameters parameters;
+
+        public Function(String name, String description, ToolParameters parameters) {
+            this.name = name;
+            this.description = description;
+            this.parameters = parameters;
+        }
+
+        public static Function of(String name, String description, ToolParameters parameters) {
+            return new Function(name, description, parameters);
+        }
     }
 
     public static class ToolParameters {

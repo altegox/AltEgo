@@ -64,4 +64,10 @@ public class ToolManager {
         return toolContainer.get(toolname);
     }
 
+    public List<ToolEntity> getToolsByGroup(String group) {
+        return toolContainer.values().stream()
+                .filter(tool -> tool.group().equals(group))
+                .toList();
+    }
+
 }

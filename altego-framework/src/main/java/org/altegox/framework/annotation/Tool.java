@@ -14,6 +14,8 @@ public @interface Tool {
 
     String description() default "";
 
+    String group() default "default";
+
     boolean remoteTool() default false;
 }
 
