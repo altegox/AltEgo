@@ -1,4 +1,4 @@
-package org.altegox;
+package org.altegox.agent;
 
 import org.altegox.framework.api.LangModel;
 
