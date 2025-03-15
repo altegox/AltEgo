@@ -159,22 +159,39 @@ void combinationChat() {
 }
 ```
 
-#### **示例：工具调用**
+#### **示例：工具调用 && 创建Agent**
 ```java
   @Test
   void toolCallChat() {
-        OpenaiModel model = OpenaiModel.builder()
-                .baseUrl(System.getenv("OPENAI_BASE_URL"))
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .modelName("gpt-4o")
-                .tools(ToolManager.getInstance().getToolsByName("getWeather"))
-                .stream(true)
-                .build();
-        OpenaiClient client = OpenaiClient.create(model);
-        ModelResponse<ChatResponse> response = client.chat(List.of(Message.user("你好, 今天泰安天气怎么样？")));
-        System.out.println(response.response());
+      OpenaiModel model = OpenaiModel.builder()
+              .baseUrl(System.getenv("OPENAI_BASE_URL"))
+              .apiKey(System.getenv("OPENAI_API_KEY"))
+              .modelName("gpt-4o")
+              .tools(ToolManager.getInstance().getToolsByName("getWeather"))
+              .stream(true)
+              .build();
+      OpenaiClient client = OpenaiClient.create(model);
+      ModelResponse<ChatResponse> response = client.chat(List.of(Message.user("你好, 今天泰安天气怎么样？")));
+      System.out.println(response.response());
+  }
+  
+  @Test
+  void testAgent() {
+      BaseAgent agent = BaseAgent.builder()
+              .baseUrl(System.getenv("OPENAI_BASE_URL"))
+              .apiKey(System.getenv("OPENAI_API_KEY"))
+              .modelName("gpt-4o")
+              .name("weather")
+              .prompt("今天天气怎么样")
+              .build();
+      String execute = agent.execute();
+      System.out.println(execute);
   }
 
+@Agent(
+        name = "获取用户当地天气",
+        group = "weather"
+)
 public class Tools {
 
     @Tool(description = "获取当前操作系统名称")
