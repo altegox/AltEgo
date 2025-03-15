@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.altegox.common.utils.Json;
 import org.altegox.framework.AltegoFramework;
-import org.altegox.framework.api.HttpClient;
-import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.api.request.Message;
-import org.altegox.framework.api.response.DefaultChatResponse;
+import org.altegox.framework.net.HttpClient;
+import org.altegox.framework.entity.request.DefaultRequest;
+import org.altegox.framework.entity.request.Message;
+import org.altegox.framework.entity.response.DefaultChatResponse;
 import org.altegox.framework.config.AltegoConfig;
 
 import org.altegox.framework.toolcall.CommandParser;

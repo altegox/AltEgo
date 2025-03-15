@@ -1,4 +1,4 @@
-package api;
+package agent.api;
 
 import org.altegox.framework.AltegoFramework;
 import org.altegox.framework.model.LangModel;
@@ -68,6 +68,7 @@ public class TestChatService {
                 .baseUrl(System.getenv("OPENAI_BASE_URL"))
                 .apiKey(System.getenv("OPENAI_API_KEY"))
                 .modelName("gpt-4o")
+                .modelName("gpt-4o-mini")
                 .stream(false)
                 .build();
 
@@ -111,8 +112,8 @@ public class TestChatService {
         LangModel model = OpenaiModel.builder()
                 .stream(true)
                 .reasoner(reasoner -> reasoner
-                        .baseUrl(System.getenv("DEEPSEEK_BASE_URL"))
-                        .apiKey(System.getenv("DEEPSEEK_API_KEY"))
+                        .baseUrl(System.getenv("OPENAI_BASE_URL"))
+                        .apiKey(System.getenv("OPENAI_API_KEY"))
                         .modelName("deepseek-reasoner")
                 )
                 .generate(generate -> generate
@@ -128,6 +129,7 @@ public class TestChatService {
             if (chatResponse.getChoices().getFirst().getDelta().getReasoningContent() != null)
                 System.out.print(chatResponse.getChoices().getFirst().getDelta().getReasoningContent());
             if (chatResponse.getChoices().getFirst().getDelta().getContent() != null){
+                System.out.println("=====");
                 System.out.print(chatResponse.getChoices().getFirst().getDelta().getContent());
             }
         }, e -> latch.countDown(), latch::countDown);
