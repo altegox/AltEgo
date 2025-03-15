@@ -88,6 +88,13 @@ public class HttpClient {
                 .subscribe(response -> listener.onSuccess(Json.fromJson(response, responseType)));
     }
 
+    public String get() {
+        return webClient.get()
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
     private void handleError(Throwable error) {
         Log.error("Request error: " + error.getMessage());
     }
@@ -99,5 +106,6 @@ public class HttpClient {
     private Runnable handleTerminate() {
         return () -> Log.debug("Terminate with signal");
     }
+
 }
 

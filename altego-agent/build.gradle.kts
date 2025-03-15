@@ -12,6 +12,7 @@ repositories {
 dependencies {
 
     implementation(project(":altego-framework"))
+    implementation(project(":api-openai"))
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

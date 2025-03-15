@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/altego-agent" />
             <option value="$PROJECT_DIR$/altego-common" />
             <option value="$PROJECT_DIR$/altego-framework" />
+            <option value="$PROJECT_DIR$/altego-rag" />
             <option value="$PROJECT_DIR$/api-openai" />
           </set>
         </option>

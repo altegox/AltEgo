@@ -7,17 +7,18 @@ import java.util.function.Function;
 
 public class LangModel {
 
-    private static final String DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
+    protected String DEFAULT_SYSTEM_MESSAGE = "You are a helpful assistant.";
 
-    private final String baseUrl;
-    private final String apiKey;
-    private final String modelName;
-    private final String systemMessage;
-    private final String prompt;
-    private final List<ToolEntity> tools;
-    private final boolean stream;
-    private final LangModel reasonerModel;
-    private final LangModel generateModel;
+    protected String baseUrl;
+    protected String apiKey;
+    protected String modelName;
+    protected String systemMessage;
+    protected String prompt;
+    protected boolean webSearch;
+    protected List<ToolEntity> tools;
+    protected boolean stream;
+    protected LangModel reasonerModel;
+    protected LangModel generateModel;
 
     public LangModel() {
         this.baseUrl = null;
@@ -25,6 +26,7 @@ public class LangModel {
         this.modelName = null;
         this.systemMessage = DEFAULT_SYSTEM_MESSAGE;
         this.prompt = null;
+        this.webSearch = false;
         this.tools = null;
         this.stream = false;
         this.reasonerModel = null;
@@ -37,6 +39,7 @@ public class LangModel {
         this.modelName = builder.modelName;
         this.systemMessage = builder.systemMessage == null ? DEFAULT_SYSTEM_MESSAGE : builder.systemMessage;
         this.prompt = builder.prompt;
+        this.webSearch = builder.webSearch;
         this.tools = builder.tools;
         this.stream = builder.stream;
 
@@ -79,6 +82,10 @@ public class LangModel {
         return prompt;
     }
 
+    public boolean enableWebSearch() {
+        return webSearch;
+    }
+
     public List<ToolEntity> getTools() {
         return tools;
     }
@@ -103,6 +110,7 @@ public class LangModel {
                 ", modelName='" + modelName + '\'' +
                 ", systemMessage='" + systemMessage + '\'' +
                 ", prompt='" + prompt + '\'' +
+                ", webSearch=" + webSearch +
                 ", tools=" + tools +
                 ", stream=" + stream +
                 ", reasonerModel=" + (reasonerModel != null ? reasonerModel.getModelName() : "null") +
@@ -120,6 +128,7 @@ public class LangModel {
         private String modelName;
         private String systemMessage;
         private String prompt;
+        private boolean webSearch;
         private List<ToolEntity> tools;
         private boolean stream;
         private LangModel reasonerModel;
@@ -147,6 +156,11 @@ public class LangModel {
 
         public T prompt(String prompt) {
             this.prompt = prompt;
+            return self();
+        }
+
+        public T webSearch() {
+            this.webSearch = true;
             return self();
         }
 
