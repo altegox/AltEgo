@@ -1,4 +1,4 @@
-package org.altegox.framework.api.request;
+package org.altegox.framework.entity.request;
 
 import com.google.gson.annotations.SerializedName;
 import org.altegox.framework.toolcall.ToolEntity;

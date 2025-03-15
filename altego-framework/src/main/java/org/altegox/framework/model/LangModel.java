@@ -1,4 +1,4 @@
-package org.altegox.framework.api;
+package org.altegox.framework.model;
 
 import org.altegox.framework.toolcall.ToolEntity;
 

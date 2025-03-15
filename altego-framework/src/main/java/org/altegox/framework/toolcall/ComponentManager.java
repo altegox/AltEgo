@@ -3,18 +3,18 @@ package org.altegox.framework.toolcall;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComponentContainer {
+public class ComponentManager {
 
-    private ComponentContainer() {
+    private ComponentManager() {
     }
 
-    private static volatile ComponentContainer instance = null;
+    private static volatile ComponentManager instance = null;
 
-    public static ComponentContainer getInstance() {
+    public static ComponentManager getInstance() {
         if (instance == null) {
-            synchronized (ComponentContainer.class) {
+            synchronized (ComponentManager.class) {
                 if (instance == null) {
-                    instance = new ComponentContainer();
+                    instance = new ComponentManager();
                 }
             }
         }

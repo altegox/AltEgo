@@ -1,7 +1,7 @@
-package org.altegox.framework.api;
+package org.altegox.framework.net;
 
-import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.service.listener.AbstractListener;
+import org.altegox.framework.entity.request.DefaultRequest;
+import org.altegox.framework.net.listener.AbstractListener;
 import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
 

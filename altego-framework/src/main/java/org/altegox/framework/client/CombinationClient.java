@@ -2,11 +2,11 @@ package org.altegox.framework.client;
 
 import org.altegox.framework.service.ChatService;
 import org.altegox.framework.service.impl.CombinationServiceImpl;
-import org.altegox.framework.api.LangModel;
-import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.api.request.Message;
-import org.altegox.framework.api.response.ChatResponse;
-import org.altegox.framework.api.response.ModelResponse;
+import org.altegox.framework.model.LangModel;
+import org.altegox.framework.entity.request.DefaultRequest;
+import org.altegox.framework.entity.request.Message;
+import org.altegox.framework.entity.response.ChatResponse;
+import org.altegox.framework.entity.response.ModelResponse;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class InstanceUtils {
 
-    private static final ComponentContainer container = ComponentContainer.getInstance();
+    private static final ComponentManager container = ComponentManager.getInstance();
     // 用于检测循环依赖：保存当前正在构造的类集合
     private static final ThreadLocal<Set<Class<?>>> constructing = ThreadLocal.withInitial(HashSet::new);
 

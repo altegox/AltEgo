@@ -4,7 +4,7 @@ import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
 import org.altegox.framework.annotation.*;
 import org.altegox.framework.config.AltegoConfig;
-import org.altegox.framework.toolcall.ComponentContainer;
+import org.altegox.framework.toolcall.ComponentManager;
 import org.altegox.framework.toolcall.InstanceUtils;
 import org.altegox.framework.toolcall.ToolCacheManager;
 import org.altegox.framework.toolcall.ToolManager;
@@ -81,7 +81,7 @@ public class AltegoFramework {
     private static void registerComponents(String... packageName) {
         AnnotationProcessor componentProcessor = new AnnotationProcessor(Component.class, packageName);
         List<Class<?>> annotatedClasses = componentProcessor.getAnnotatedClasses();
-        ComponentContainer container = ComponentContainer.getInstance();
+        ComponentManager container = ComponentManager.getInstance();
         annotatedClasses.stream()
                 .filter(clazz -> !container.contains(clazz))
                 .forEach(clazz -> container.register(clazz, InstanceUtils.createInstance(clazz)));

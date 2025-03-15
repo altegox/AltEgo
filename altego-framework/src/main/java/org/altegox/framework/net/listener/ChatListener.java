@@ -1,4 +1,4 @@
-package org.altegox.framework.service.listener;
+package org.altegox.framework.net.listener;
 
 import java.util.concurrent.CompletableFuture;
 

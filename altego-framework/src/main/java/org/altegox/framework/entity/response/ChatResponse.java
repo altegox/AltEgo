@@ -1,47 +1,32 @@
-package org.altegox.framework.api.response;
+package org.altegox.framework.entity.response;
 
 import com.google.gson.annotations.SerializedName;
+import org.altegox.framework.entity.request.Message;
 
 import java.util.List;
 
-public class DefaultChatResponse {
-
-    @SerializedName("id")
+public class ChatResponse {
+    private List<Choice> choices;
+    private long created;
     private String id;
-
-    @SerializedName("object")
+    private String model;
     private String object;
 
-    @SerializedName("created")
-    private long created;
-
-    @SerializedName("model")
-    private String model;
+    @SerializedName("prompt_filter_results")
+    private List<PromptFilterResult> promptFilterResults;
 
     @SerializedName("system_fingerprint")
     private String systemFingerprint;
-
-    @SerializedName("choices")
-    private List<Choice> choices;
-
-    @SerializedName("usage")
     private Usage usage;
 
-    // Getters and Setters
-    public String getId() {
-        return id;
+    //region DefaultChatResponse getter and setter
+
+    public List<Choice> getChoices() {
+        return choices;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getObject() {
-        return object;
-    }
-
-    public void setObject(String object) {
-        this.object = object;
+    public void setChoices(List<Choice> choices) {
+        this.choices = choices;
     }
 
     public long getCreated() {
@@ -52,12 +37,36 @@ public class DefaultChatResponse {
         this.created = created;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getModel() {
         return model;
     }
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public void setObject(String object) {
+        this.object = object;
+    }
+
+    public List<PromptFilterResult> getPromptFilterResults() {
+        return promptFilterResults;
+    }
+
+    public void setPromptFilterResults(List<PromptFilterResult> promptFilterResults) {
+        this.promptFilterResults = promptFilterResults;
     }
 
     public String getSystemFingerprint() {
@@ -68,14 +77,6 @@ public class DefaultChatResponse {
         this.systemFingerprint = systemFingerprint;
     }
 
-    public List<Choice> getChoices() {
-        return choices;
-    }
-
-    public void setChoices(List<Choice> choices) {
-        this.choices = choices;
-    }
-
     public Usage getUsage() {
         return usage;
     }
@@ -84,39 +85,42 @@ public class DefaultChatResponse {
         this.usage = usage;
     }
 
+    //endregion
+
     @Override
     public String toString() {
         return "DefaultChatResponse{" +
-                "id='" + id + '\'' +
-                ", object='" + object + '\'' +
+                "choices=" + choices +
                 ", created=" + created +
+                ", id='" + id + '\'' +
                 ", model='" + model + '\'' +
+                ", object='" + object + '\'' +
+                ", promptFilterResults=" + promptFilterResults +
                 ", systemFingerprint='" + systemFingerprint + '\'' +
-                ", choices=" + choices +
                 ", usage=" + usage +
                 '}';
     }
 
     public static class Choice {
-        @SerializedName("index")
-        private int index;
+        @SerializedName("content_filter_results")
+        private ContentFilterResults contentFilterResults;
 
         @SerializedName("finish_reason")
         private String finishReason;
-
-        @SerializedName("logprobs")
-        private Object logprobs; // 可以是 null
-
-        @SerializedName("message")
+        private Delta delta;
+        private String text;
+        private int index;
+        private Object logprobs;
         private Message message;
 
-        // Getters and Setters
-        public int getIndex() {
-            return index;
+        //region Choice getter and setter
+
+        public ContentFilterResults getContentFilterResults() {
+            return contentFilterResults;
         }
 
-        public void setIndex(int index) {
-            this.index = index;
+        public void setContentFilterResults(ContentFilterResults contentFilterResults) {
+            this.contentFilterResults = contentFilterResults;
         }
 
         public String getFinishReason() {
@@ -125,6 +129,14 @@ public class DefaultChatResponse {
 
         public void setFinishReason(String finishReason) {
             this.finishReason = finishReason;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
         }
 
         public Object getLogprobs() {
@@ -143,55 +155,80 @@ public class DefaultChatResponse {
             this.message = message;
         }
 
+        public Delta getDelta() {
+            return delta;
+        }
+
+        public void setDelta(Delta delta) {
+            this.delta = delta;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        //endregion
+
         @Override
         public String toString() {
             return "Choice{" +
-                    "index=" + index +
+                    "contentFilterResults=" + contentFilterResults +
                     ", finishReason='" + finishReason + '\'' +
+                    ", index=" + index +
                     ", logprobs=" + logprobs +
                     ", message=" + message +
+                    ", delta=" + delta +
+                    ", text='" + text + '\'' +
                     '}';
         }
-
     }
 
-    public static class Message {
-        @SerializedName("role")
+    public static class Delta {
         private String role;
-
-        @SerializedName("content")
         private String content;
-
-        @SerializedName("refusal")
-        private String refusal; // 可能为 null
-
-        @SerializedName("audio")
-        private String audio; // 可能为 null
-
-        @SerializedName("function_call")
-        private String functionCall; // 可能为 null
-
+        private String refusal;
         @SerializedName("tool_calls")
-        private List<ToolCall> toolCalls; // 可能为 null
+        private List<ChatResponse.ToolCall> toolCalls;
+        @SerializedName("reasoning_content")
+        private String reasoningContent;
 
-        // Getters and Setters
+        public String getContent() {
+            return content;
+        }
+
         public String getRole() {
             return role;
         }
 
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public String getContent() {
-            return content;
+        public String getReasoningContent() {
+            return reasoningContent;
         }
 
         public void setContent(String content) {
             this.content = content;
         }
 
-        public Object getRefusal() {
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public void setReasoningContent(String reasoningContent) {
+            this.reasoningContent = reasoningContent;
+        }
+
+        public List<ChatResponse.ToolCall> getToolCalls() {
+            return toolCalls;
+        }
+
+        public void setToolCalls(List<ChatResponse.ToolCall> toolCalls) {
+            this.toolCalls = toolCalls;
+        }
+
+        public String getRefusal() {
             return refusal;
         }
 
@@ -199,54 +236,110 @@ public class DefaultChatResponse {
             this.refusal = refusal;
         }
 
-        public Object getAudio() {
-            return audio;
-        }
-
-        public void setAudio(String audio) {
-            this.audio = audio;
-        }
-
-        public Object getFunctionCall() {
-            return functionCall;
-        }
-
-        public void setFunctionCall(String functionCall) {
-            this.functionCall = functionCall;
-        }
-
-        public List<ToolCall> getToolCalls() {
-            return toolCalls;
-        }
-
-        public void setToolCalls(List<ToolCall> toolCalls) {
-            this.toolCalls = toolCalls;
-        }
-
         @Override
         public String toString() {
-            return "Message{" +
-                    "role='" + role + '\'' +
-                    ", content='" + content + '\'' +
-                    ", refusal=" + refusal +
-                    ", audio=" + audio +
-                    ", functionCall=" + functionCall +
+            return "Delta{" +
+                    "content='" + content + '\'' +
+                    ", role='" + role + '\'' +
+                    ", refusal='" + refusal + '\'' +
+                    ", reasoningContent='" + reasoningContent + '\'' +
                     ", toolCalls=" + toolCalls +
                     '}';
         }
     }
 
+    public static class ContentFilterResults {
+        private FilterDetail hate;
+
+        @SerializedName("self_harm")
+        private FilterDetail selfHarm;
+        private FilterDetail sexual;
+        private FilterDetail violence;
+
+        //region ContentFilterResults getter and setter
+
+        public FilterDetail getHate() {
+            return hate;
+        }
+
+        public void setHate(FilterDetail hate) {
+            this.hate = hate;
+        }
+
+        public FilterDetail getSelfHarm() {
+            return selfHarm;
+        }
+
+        public void setSelfHarm(FilterDetail selfHarm) {
+            this.selfHarm = selfHarm;
+        }
+
+        public FilterDetail getSexual() {
+            return sexual;
+        }
+
+        public void setSexual(FilterDetail sexual) {
+            this.sexual = sexual;
+        }
+
+        public FilterDetail getViolence() {
+            return violence;
+        }
+
+        public void setViolence(FilterDetail violence) {
+            this.violence = violence;
+        }
+
+        //endregion
+
+        @Override
+        public String toString() {
+            return "ContentFilterResults{" +
+                    "hate=" + hate +
+                    ", selfHarm=" + selfHarm +
+                    ", sexual=" + sexual +
+                    ", violence=" + violence +
+                    '}';
+        }
+    }
+
+
+    public static class FilterDetail {
+        private boolean filtered;
+        private String severity;
+
+        //region FilterDetail getter and setter
+        public boolean isFiltered() {
+            return filtered;
+        }
+
+        public void setFiltered(boolean filtered) {
+            this.filtered = filtered;
+        }
+
+        public String getSeverity() {
+            return severity;
+        }
+
+        public void setSeverity(String severity) {
+            this.severity = severity;
+        }
+
+        //endregion
+
+        @Override
+        public String toString() {
+            return "FilterDetail{" +
+                    "filtered=" + filtered +
+                    ", severity='" + severity + '\'' +
+                    '}';
+        }
+    }
+
     public static class ToolCall {
-        @SerializedName("id")
         private String id;
-
-        @SerializedName("function")
         private FunctionCall function;
-
-        @SerializedName("type")
         private String type;
-
-        @SerializedName("index")
         private int index;
 
         // Getters and Setters
@@ -294,10 +387,7 @@ public class DefaultChatResponse {
     }
 
     public static class FunctionCall {
-        @SerializedName("name")
         private String name;
-
-        @SerializedName("arguments")
         private String arguments;
 
         // Getters and Setters
@@ -326,45 +416,64 @@ public class DefaultChatResponse {
         }
     }
 
-    public static class Usage {
-        @SerializedName("prompt_tokens")
-        private int promptTokens;
+    public static class PromptFilterResult {
+        @SerializedName("content_filter_results")
+        private ContentFilterResults contentFilterResults;
 
+        @SerializedName("prompt_index")
+        private int promptIndex;
+
+        //region PromptFilterResult getter and setter
+        public ContentFilterResults getContentFilterResults() {
+            return contentFilterResults;
+        }
+
+        public void setContentFilterResults(ContentFilterResults contentFilterResults) {
+            this.contentFilterResults = contentFilterResults;
+        }
+
+        public int getPromptIndex() {
+            return promptIndex;
+        }
+
+        public void setPromptIndex(int promptIndex) {
+            this.promptIndex = promptIndex;
+        }
+
+        //endregion
+
+        @Override
+        public String toString() {
+            return "PromptFilterResult{" +
+                    "contentFilterResults=" + contentFilterResults +
+                    ", promptIndex=" + promptIndex +
+                    '}';
+        }
+    }
+
+    public static class Usage {
         @SerializedName("completion_tokens")
         private int completionTokens;
-
-        @SerializedName("total_tokens")
-        private int totalTokens;
 
         @SerializedName("completion_tokens_details")
         private CompletionTokensDetails completionTokensDetails;
 
+        @SerializedName("prompt_tokens")
+        private int promptTokens;
+
         @SerializedName("prompt_tokens_details")
         private PromptTokensDetails promptTokensDetails;
 
-        // Getters and Setters
-        public int getPromptTokens() {
-            return promptTokens;
-        }
+        @SerializedName("total_tokens")
+        private int totalTokens;
 
-        public void setPromptTokens(int promptTokens) {
-            this.promptTokens = promptTokens;
-        }
-
+        //region Usage getter and setter
         public int getCompletionTokens() {
             return completionTokens;
         }
 
         public void setCompletionTokens(int completionTokens) {
             this.completionTokens = completionTokens;
-        }
-
-        public int getTotalTokens() {
-            return totalTokens;
-        }
-
-        public void setTotalTokens(int totalTokens) {
-            this.totalTokens = totalTokens;
         }
 
         public CompletionTokensDetails getCompletionTokensDetails() {
@@ -375,6 +484,14 @@ public class DefaultChatResponse {
             this.completionTokensDetails = completionTokensDetails;
         }
 
+        public int getPromptTokens() {
+            return promptTokens;
+        }
+
+        public void setPromptTokens(int promptTokens) {
+            this.promptTokens = promptTokens;
+        }
+
         public PromptTokensDetails getPromptTokensDetails() {
             return promptTokensDetails;
         }
@@ -383,17 +500,26 @@ public class DefaultChatResponse {
             this.promptTokensDetails = promptTokensDetails;
         }
 
+        public int getTotalTokens() {
+            return totalTokens;
+        }
+
+        public void setTotalTokens(int totalTokens) {
+            this.totalTokens = totalTokens;
+        }
+
+        //endregion
+
         @Override
         public String toString() {
             return "Usage{" +
-                    "promptTokens=" + promptTokens +
-                    ", completionTokens=" + completionTokens +
-                    ", totalTokens=" + totalTokens +
+                    "completionTokens=" + completionTokens +
                     ", completionTokensDetails=" + completionTokensDetails +
+                    ", promptTokens=" + promptTokens +
                     ", promptTokensDetails=" + promptTokensDetails +
+                    ", totalTokens=" + totalTokens +
                     '}';
         }
-
     }
 
     public static class CompletionTokensDetails {
@@ -409,7 +535,7 @@ public class DefaultChatResponse {
         @SerializedName("rejected_prediction_tokens")
         private int rejectedPredictionTokens;
 
-        // Getters and Setters
+        //region DefaultChatResponse getter and setter
         public int getAcceptedPredictionTokens() {
             return acceptedPredictionTokens;
         }
@@ -442,6 +568,8 @@ public class DefaultChatResponse {
             this.rejectedPredictionTokens = rejectedPredictionTokens;
         }
 
+        //endregion
+
         @Override
         public String toString() {
             return "CompletionTokensDetails{" +
@@ -451,7 +579,6 @@ public class DefaultChatResponse {
                     ", rejectedPredictionTokens=" + rejectedPredictionTokens +
                     '}';
         }
-
     }
 
     public static class PromptTokensDetails {
@@ -461,7 +588,7 @@ public class DefaultChatResponse {
         @SerializedName("cached_tokens")
         private int cachedTokens;
 
-        // Getters and Setters
+        //region PromptTokensDetails getter and setter
         public int getAudioTokens() {
             return audioTokens;
         }
@@ -478,6 +605,8 @@ public class DefaultChatResponse {
             this.cachedTokens = cachedTokens;
         }
 
+        //endregion
+
         @Override
         public String toString() {
             return "PromptTokensDetails{" +
@@ -485,7 +614,11 @@ public class DefaultChatResponse {
                     ", cachedTokens=" + cachedTokens +
                     '}';
         }
-
     }
 
 }
+
+
+
+
+

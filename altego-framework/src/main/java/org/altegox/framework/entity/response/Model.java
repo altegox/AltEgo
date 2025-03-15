@@ -1,4 +1,4 @@
-package org.altegox.framework.api.response;
+package org.altegox.framework.entity.response;
 
 import java.util.List;
 

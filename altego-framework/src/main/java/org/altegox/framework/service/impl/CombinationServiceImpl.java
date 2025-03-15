@@ -1,15 +1,15 @@
 package org.altegox.framework.service.impl;
 
 import org.altegox.common.log.Log;
-import org.altegox.framework.api.HttpClient;
-import org.altegox.framework.api.LangModel;
-import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.api.request.Message;
-import org.altegox.framework.api.response.ChatResponse;
-import org.altegox.framework.api.response.ModelResponse;
+import org.altegox.framework.net.HttpClient;
+import org.altegox.framework.model.LangModel;
+import org.altegox.framework.entity.request.DefaultRequest;
+import org.altegox.framework.entity.request.Message;
+import org.altegox.framework.entity.response.ChatResponse;
+import org.altegox.framework.entity.response.ModelResponse;
 import org.altegox.framework.service.ChatService;
-import org.altegox.framework.service.listener.AbstractListener;
-import org.altegox.framework.service.listener.ChatListener;
+import org.altegox.framework.net.listener.AbstractListener;
+import org.altegox.framework.net.listener.ChatListener;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;

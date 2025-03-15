@@ -1,7 +1,7 @@
-package org.altegox.framework.api.request;
+package org.altegox.framework.entity.request;
 
 import com.google.gson.annotations.SerializedName;
-import org.altegox.framework.api.response.ChatResponse;
+import org.altegox.framework.entity.response.ChatResponse;
 
 import java.util.List;
 

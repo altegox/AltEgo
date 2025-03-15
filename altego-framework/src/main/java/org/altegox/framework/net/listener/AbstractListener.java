@@ -1,4 +1,4 @@
-package org.altegox.framework.service.listener;
+package org.altegox.framework.net.listener;
 
 public abstract class AbstractListener<T> {
 

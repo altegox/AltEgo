@@ -2,7 +2,7 @@ package org.altegox.agent;
 
 import org.altegox.api.OpenaiClient;
 import org.altegox.api.OpenaiModel;
-import org.altegox.framework.api.LangModel;
+import org.altegox.framework.model.LangModel;
 import org.altegox.framework.toolcall.ToolManager;
 
 public class BaseAgent extends LangModel {

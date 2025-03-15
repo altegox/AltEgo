@@ -1,8 +1,8 @@
 package org.altegox.framework.service;
 
-import org.altegox.framework.api.request.DefaultRequest;
-import org.altegox.framework.api.request.Message;
-import org.altegox.framework.api.response.ModelResponse;
+import org.altegox.framework.entity.request.DefaultRequest;
+import org.altegox.framework.entity.request.Message;
+import org.altegox.framework.entity.response.ModelResponse;
 
 import java.util.List;
 
