@@ -1,7 +1,5 @@
 package org.altegox.agent.context;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public class AgentContext {
     private AgentContext() {
     }
@@ -14,14 +12,26 @@ public class AgentContext {
         return Holder.INSTANCE;
     }
 
-    private final ConcurrentHashMap<String, AgentConfig> agentConfigMap = new ConcurrentHashMap<>();
+    private AgentConfig agentConfig = null;
 
-    public AgentConfig getAgentConfigByGroup(String group) {
-        return agentConfigMap.get(group);
+    public AgentConfig getAgentConfig() {
+        return agentConfig;
     }
 
-    public void setAgentConfigByGroup(String group, AgentConfig agentConfig) {
-        agentConfigMap.put(group, agentConfig);
+    public void initAgentConfig(String baseUrl, String apiKey, String modelName) {
+        agentConfig = AgentConfig.of(baseUrl, apiKey, modelName);
+    }
+
+    public String getApiKey() {
+        return agentConfig.getApiKey();
+    }
+
+    public String getBaseUrl() {
+        return agentConfig.getBaseUrl();
+    }
+
+    public String getModelName() {
+        return agentConfig.getModelName();
     }
 
 }

@@ -11,7 +11,7 @@ public class BaseAgent extends LangModel {
 
     protected static String DEFAULT_SYSTEM_MESSAGE = """
             你是一个可以做到任何事情的的AI助手，你可以随意使用提供的Tool/Function完成用户交给你的任务，并且可以连续多次调用Tool。
-            在接到任务时候，你应该将其分解成多个子问题并逐个去解决，如果其中有子任务需要其他Agent帮你，你可以调用CreateAgent工具创建另一个Agent帮助你完成某个任务。
+            在接到任务时候，你应该将其分解成多个子问题并逐个去解决，如果其中有子任务需要其他Agent帮你，你可以调用CreateAgent工具创建另一个Agent帮助你完成某个子任务。
             """;
 
     private final String name;
@@ -22,8 +22,10 @@ public class BaseAgent extends LangModel {
         super(builder);
         this.name = builder.name;
         this.prompt = builder.prompt;
-        this.tools = ToolManager.getInstance().getToolsByGroup(name);
-        AgentContext.getContext().setAgentConfigByGroup(name, AgentConfig.of(name, baseUrl, apiKey, modelName));
+        if (name != null) {
+            this.tools = ToolManager.getInstance().getToolsByGroup(name);
+        }
+        AgentContext.getContext().initAgentConfig(this.getBaseUrl(), this.getApiKey(), this.getModelName());
     }
 
     public static Builder builder() {
