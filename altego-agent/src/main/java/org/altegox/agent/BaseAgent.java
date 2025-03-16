@@ -1,5 +1,7 @@
 package org.altegox.agent;
 
+import org.altegox.agent.context.AgentConfig;
+import org.altegox.agent.context.AgentContext;
 import org.altegox.api.OpenaiClient;
 import org.altegox.api.OpenaiModel;
 import org.altegox.framework.model.LangModel;
@@ -21,6 +23,7 @@ public class BaseAgent extends LangModel {
         this.name = builder.name;
         this.prompt = builder.prompt;
         this.tools = ToolManager.getInstance().getToolsByGroup(name);
+        AgentContext.getContext().setAgentConfigByGroup(name, AgentConfig.of(name, baseUrl, apiKey, modelName));
     }
 
     public static Builder builder() {
