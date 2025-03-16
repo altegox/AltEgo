@@ -2,6 +2,7 @@ package org.altegox.agent.utils;
 
 import org.altegox.common.log.Log;
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -42,5 +43,20 @@ public class FileUtils {
         }
     }
 
+    public static String readFile(String fileSavePath, String fileName) {
+        try {
+            FileReader reader = new FileReader(fileSavePath + "/" + fileName);
+            StringBuilder content = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                content.append((char) c);
+            }
+            reader.close();
+            return content.toString();
+        } catch (IOException e) {
+            Log.error("Error reading file: " + e.getMessage());
+            return null;
+        }
+    }
 
 }

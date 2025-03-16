@@ -23,8 +23,21 @@ public class InnerTools {
             },
             group = "inner-tools"
     )
-    private boolean saveFile(String fileName, String content) {
-        return FileUtils.saveFile(AltegoConfig.getFileSavePath(), fileName, content);
+    private String saveFile(String fileName, String content) {
+        boolean savedFile = FileUtils.saveFile(AltegoConfig.getFileSavePath(), fileName, content);
+        if (!savedFile) return "文件保存失败";
+        return fileName;
+    }
+
+    @Tool(
+            description = "读取文件内容",
+            params = {
+                    @Param(param = "fileName", description = "文件名，包含'.txt'的拓展名格式，例如: task.txt")
+            },
+            group = "inner-tools"
+    )
+    private String readFile(String fileName){
+        return FileUtils.readFile(AltegoConfig.getFileSavePath(), fileName);
     }
 
     @Tool(
