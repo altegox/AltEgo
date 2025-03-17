@@ -4,6 +4,7 @@ import org.altegox.common.log.Log;
 import org.altegox.common.utils.Json;
 import org.altegox.framework.annotation.*;
 import org.altegox.framework.config.AltegoConfig;
+import org.altegox.framework.config.MetaData;
 import org.altegox.framework.toolcall.ComponentManager;
 import org.altegox.framework.toolcall.InstanceUtils;
 import org.altegox.framework.toolcall.ToolCacheManager;

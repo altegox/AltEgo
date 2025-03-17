@@ -1,4 +1,4 @@
-package org.altegox.framework;
+package org.altegox.framework.config;
 
 public class MetaData {
 
