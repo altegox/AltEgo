@@ -1,7 +1,8 @@
-package org.altegox.framework.annotation;
+package org.altegox.common.utils;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
+import org.altegox.framework.annotation.Exclude;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -88,7 +89,6 @@ public class AnnotationProcessor {
      * 判断方法是否包含指定注解
      */
     private boolean isIncludedAnnotation(Class<?> clazz, Method method) {
-//        return clazz.isAnnotationPresent(annotation) || method.isAnnotationPresent(annotation);
         return annotations.stream()
                 .anyMatch(aClass -> clazz.isAnnotationPresent(aClass)
                         || method.isAnnotationPresent(aClass));

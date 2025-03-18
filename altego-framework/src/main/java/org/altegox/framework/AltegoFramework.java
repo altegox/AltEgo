@@ -1,6 +1,7 @@
 package org.altegox.framework;
 
 import org.altegox.common.log.Log;
+import org.altegox.common.utils.AnnotationProcessor;
 import org.altegox.common.utils.Json;
 import org.altegox.framework.annotation.*;
 import org.altegox.framework.config.AltegoConfig;

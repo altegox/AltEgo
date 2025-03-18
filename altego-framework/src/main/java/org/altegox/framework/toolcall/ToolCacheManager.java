@@ -1,7 +1,7 @@
 package org.altegox.framework.toolcall;
 
 import org.altegox.framework.config.MetaData;
-import org.altegox.framework.annotation.AnnotationProcessor;
+import org.altegox.common.utils.AnnotationProcessor;
 import org.altegox.framework.annotation.ToolCache;
 
 import java.util.*;
