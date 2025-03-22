@@ -25,9 +25,8 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
 
     @Override
     public String generate(String message) {
-        DefaultRequest request = buildDefaultRequest(List.of(Message.user(message)));
-        ChatResponse chatResponse = handleToolCalls(request, new ToolCaller<>());
-        return chatResponse.getChoices().getFirst().getMessage().getContent();
+        return this.chat(List.of(Message.user(message)))
+                .response().getChoices().getFirst().getMessage().getContent();
     }
 
     @Override
@@ -111,7 +110,7 @@ public class ChatServiceImpl<T extends LangModel> implements ChatService<ChatRes
             toolCalls.forEach(toolCall -> {
                 String toolName = toolCall.getFunction().getName();
                 String toolArgs = toolCall.getFunction().getArguments();
-                String toolCallResult = toolCaller.call(toolName, toolArgs);
+                String toolCallResult = toolCaller.call(model, toolName, toolArgs);
                 messageList.add(Message.tool(toolCallResult, toolCall.getId()));
             });
 

@@ -1,12 +1,12 @@
 package org.altegox.framework.toolcall.caller;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.altegox.common.enums.CacheEnum;
 import org.altegox.common.exception.AltegoException;
 import org.altegox.common.exception.ToolNotFindException;
 import org.altegox.common.utils.Json;
 import org.altegox.framework.config.AltegoConfig;
+import org.altegox.framework.model.LangModel;
 import org.altegox.framework.toolcall.InstanceUtils;
 import org.altegox.framework.toolcall.ToolEntity;
 import org.altegox.framework.toolcall.ToolCacheManager;
@@ -59,20 +59,31 @@ public class ToolCaller<T> implements Caller<T> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public T call(String toolName, String args) {
+    public T call(LangModel model, String toolName, String args) {
         if (args == null || args.isBlank() || args.equals("{}")) {
             return call(toolName);
         }
-        JsonObject jsonObject = Json.fromJson(args, JsonObject.class);
         List<String> keys = new ArrayList<>();
+        JsonObject jsonObject = Json.fromJson(args, JsonObject.class);
         ToolEntity toolEntity = toolManager.getToolByName(toolName);
         toolEntity.parameters().properties().forEach((key, property) -> {
             if (jsonObject.has(key)) {
                 keys.add(String.valueOf(jsonObject.get(key)));
             }
         });
-        return call(toolName, keys.toArray());
+
+        // 为createAgent方法添加后门，临时实现，待修改
+        if (model != null && "createAgent".equals(toolName)) {
+            keys.add(model.getBaseUrl());
+            keys.add(model.getApiKey());
+            keys.add(model.getModelName());
+        }
+
+        if (!toolEntity.isRemoteTool())
+            return call(toolName, keys.toArray());
+        return (T) new MCPCaller().call(toolName, keys.toArray());
     }
 
 

@@ -8,6 +8,7 @@ import org.altegox.framework.annotation.Param;
 import org.altegox.framework.annotation.Tool;
 import org.altegox.framework.config.AltegoConfig;
 import org.altegox.framework.toolcall.ToolEntity;
+import org.altegox.framework.toolcall.ToolManager;
 import org.altegox.framework.toolcall.executer.CodeExecuter;
 import org.altegox.framework.toolcall.executer.ShellExecuter;
 
@@ -36,7 +37,7 @@ public class InnerTools {
             },
             group = "inner-tools"
     )
-    private String readFile(String fileName){
+    private String readFile(String fileName) {
         return FileUtils.readFile(AltegoConfig.getFileSavePath(), fileName);
     }
 
@@ -48,15 +49,13 @@ public class InnerTools {
             },
             group = "inner-tools"
     )
-    private String createAgent(String prompt, List<ToolEntity> tools) {
-        AgentContext context = AgentContext.getContext();
-        AgentConfig agentConfig = context.getAgentConfig();
+    private String createAgent(String prompt, String baseUrl, String apiKay, String modelname) {
         BaseAgent agent = BaseAgent.builder()
-                .tools(tools)
+                .tools(ToolManager.getInstance().getToolsByGroup(modelname))
                 .prompt(prompt)
-                .baseUrl(agentConfig.getBaseUrl())
-                .apiKey(agentConfig.getApiKey())
-                .modelName(agentConfig.getModelName())
+                .baseUrl(baseUrl)
+                .apiKey(apiKay)
+                .modelName(modelname)
                 .build();
         return agent.execute();
     }
